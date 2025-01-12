@@ -7,8 +7,8 @@ export default function Background() {
         aspect-square 
         w-full 
         bg-gradient-to-r
-        from-cyan-600 
-        to-sky-600 
+        from-sky-600 
+        to-sky-300 
         blur-3xl 
         filter" 
     />
