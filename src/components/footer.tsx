@@ -37,13 +37,13 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <p>123 Ceramic Street</p>
-            <p>Pottery Town, PT 12345</p>
-            <p>Email: info@ceramiccraft.com</p>
+            <p>Pacifica Pottery Town, CA 12345</p>
+            <p>Email: info@seahorse-ceramics.com</p>
             <p>Phone: (123) 456-7890</p>
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-200 text-center">
-          <p>&copy; 2023 CeramicCraft. All rights reserved.</p>
+          <p>&copy; 2025 Seahorse Ceramics. All rights reserved.</p>
         </div>
       </div>
     </footer>

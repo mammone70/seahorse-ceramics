@@ -6,14 +6,15 @@ import { Button } from "@/components/ui/button"
 
 export default function Header() {
   return (
-    <header className="bg-white shadow-sm">
+    <header className="border-b-2 shadow-sm">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-      <Link href="/" className="font-bold text-xl">
+        <Link href="/" className="font-bold text-xl">
             <Image 
                 src="/img/seahorse-logo.png" 
                 alt="Seahorse Ceramics"
                 width={60}
-                height={50}/>
+                height={50}
+                className="rounded-full"/>
         </Link>
         <nav>
           <ul className="flex space-x-4">

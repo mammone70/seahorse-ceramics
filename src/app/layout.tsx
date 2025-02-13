@@ -44,6 +44,7 @@ import { Inter } from "next/font/google"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import type React from "react" // Added import for React
+// import Background from "@/components/background"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -59,7 +60,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-white text-gray-900`}>
+      <body className={`${inter.className} bg-gradient-to-r from-sky-300 to-cyan-100 text-gray-900`}>
+        {/* <Background/> */}
         <Header />
         <main>{children}</main>
         <Footer />
