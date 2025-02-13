@@ -49,7 +49,7 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Handcrafted Ceramics",
-  description: "Beautiful homemade ceramics for your home",
+  description: "Beautiful homemade ceramics from Coastal California",
 }
 
 export default function RootLayout({
