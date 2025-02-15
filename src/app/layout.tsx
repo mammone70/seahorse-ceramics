@@ -50,20 +50,24 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Handcrafted Ceramics",
+  icons : "/img/seahorse-logo.png",
   description: "Beautiful homemade ceramics from Coastal California",
 }
 
 export default function RootLayout({
   children,
-}: {
+  modal
+}: Readonly<{
   children: React.ReactNode
-}) {
+  modal: React.ReactNode
+}>) {
   return (
     <html lang="en">
       <body className={`${inter.className} bg-gradient-to-r from-sky-300 to-cyan-100 text-gray-900`}>
         {/* <Background/> */}
         <Header />
-        <main>{children}</main>
+        {modal}
+        {children}
         <Footer />
       </body>
     </html>

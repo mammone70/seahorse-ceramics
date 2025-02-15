@@ -16,7 +16,7 @@ const products = [
 
 export default function Home() {
   return (
-    <div className="bg-gradient-to-r from-sky-300 to-cyan-100">
+    <main className="bg-gradient-to-r from-sky-300 to-cyan-100">
       {/* Hero Section */}
       <section className=" py-20">
         <div className="container mx-auto px-4">
@@ -29,13 +29,15 @@ export default function Home() {
               </Button>
             </div>
             <div className="md:w-1/2">
-              <Image
-                src={products[0].image}
-                alt={products[0].name}
-                width={500}
-                height={500}
-                className="rounded-lg shadow-lg mx-auto"
-              />
+              <Link href="/products/1">
+                <Image
+                  src={products[0].image}
+                  alt={products[0].name}
+                  width={500}
+                  height={500}
+                  className="rounded-lg shadow-lg mx-auto"
+                />
+              </Link>
             </div>
           </div>
         </div>
@@ -93,6 +95,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   )
 }
