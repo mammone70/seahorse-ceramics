@@ -1,4 +1,5 @@
 import { Modal } from "@/components/modal";
+import ProductDetail from "@/components/products/product-detail";
 
 export default async function ProductModal({ 
     params, 
@@ -9,8 +10,10 @@ export default async function ProductModal({
     const id = (await params).id; 
 
     return (
-        <Modal>
-            {id}
-        </Modal> 
+        <div>
+            <Modal>
+                <ProductDetail id={id}/>
+            </Modal> 
+        </div>
      )
 }

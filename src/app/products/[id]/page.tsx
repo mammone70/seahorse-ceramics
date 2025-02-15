@@ -1,3 +1,4 @@
+import ProductDetail from "@/components/products/product-detail";
 
 export default async function ProductPage({ 
     params, 
@@ -8,6 +9,6 @@ export default async function ProductPage({
     const id = (await params).id; 
 
     return (
-        <div>{id}</div>
+        <ProductDetail id={id}/>
      )
 }

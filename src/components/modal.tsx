@@ -22,12 +22,16 @@ export function Modal({
     }
 
     return (
-        <Dialog defaultOpen={true} open={true} onOpenChange={handleOpenChange}>
-            <DialogOverlay>
+        <Dialog 
+            defaultOpen={true} 
+            open={true} 
+            onOpenChange={handleOpenChange}
+        >
+            <DialogOverlay className="bg-transparent">
                 <DialogHeader>
                     <DialogTitle>Modal</DialogTitle>
                 </DialogHeader>
-                <DialogContent className="overflow-y-hidden">
+                <DialogContent className="overflow-scroll max-w-3xl">
                     {children}
                 </DialogContent>
             </DialogOverlay>
