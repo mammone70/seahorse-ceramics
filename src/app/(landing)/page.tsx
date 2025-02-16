@@ -18,6 +18,7 @@ const productsJSON = [
 export default async function Home() {
 
   const products = await getProductsServerAction();
+
   return (
     <main className="bg-gradient-to-r from-sky-300 to-cyan-100">
       {/* Hero Section */}
@@ -77,22 +78,24 @@ export default async function Home() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8 text-center">Our Products</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {productsJSON.map((product) => (
+            {products.map((product) => (
               <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <Image
-                  src={product.image || "/placeholder.svg"}
-                  alt={product.name}
-                  width={300}
-                  height={300}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-                  <p className="text-gray-600 mb-4">${product.price.toFixed(2)}</p>
-                  <Button variant="outline" className="w-full">
-                    Add to Cart
-                  </Button>
-                </div>
+                <Link href={`/products/${product.id}`}>
+                  <Image
+                    src={product.imageURL || "/placeholder.svg"}
+                    alt={product.name}
+                    width={300}
+                    height={300}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
+                    <p className="text-gray-600 mb-4">${product.price}</p>
+                    <Button variant="outline" className="w-full">
+                      Add to Cart
+                    </Button>
+                  </div>
+                </Link> 
               </div>
             ))}
           </div>
