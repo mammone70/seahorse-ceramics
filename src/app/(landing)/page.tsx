@@ -1,8 +1,9 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { getProductsServerAction } from "@/actions/products"
 
-const products = [
+const productsJSON = [
   { id: 0, name: "Valentine's Mugs", price: 39.99, image: "/img/products/valentine-mugs.jpg" },
   { id: 1, name: "Valentine's Mug", price: 24.99, image: "/img/products/valentine-single.jpg" },
   { id: 2, name: "Bird Mugs", price: 14.99, image: "/img/products/birds.jpg" },
@@ -14,7 +15,9 @@ const products = [
   { id: 8, name: "Wood Landscapes", price: 34.99, image: "/img/products/woods.jpg" },
 ]
 
-export default function Home() {
+export default async function Home() {
+
+  const products = await getProductsServerAction();
   return (
     <main className="bg-gradient-to-r from-sky-300 to-cyan-100">
       {/* Hero Section */}
@@ -31,7 +34,7 @@ export default function Home() {
             <div className="md:w-1/2">
               <Link href="/products/1">
                 <Image
-                  src={products[0].image}
+                  src={products[0].imageURL || ""}
                   alt={products[0].name}
                   width={500}
                   height={500}
@@ -50,8 +53,8 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="md:w-1/2">
               <Image
-                src={products[1].image}
-                alt={products[1].name}
+                src={productsJSON[1].image}
+                alt={productsJSON[1].name}
                 width={600}
                 height={400}
                 className="object-cover w-full h-full"
@@ -62,7 +65,7 @@ export default function Home() {
               <p className="text-gray-600 mb-4">
                 Surprise your Valentine this year with our handcrafted mug in a beautiful pink glaze.
               </p>
-              <p className="text-2xl font-bold mb-4">{products[1].price}</p>
+              <p className="text-2xl font-bold mb-4">{productsJSON[1].price}</p>
               <Button>Add to Cart</Button>
             </div>
           </div>
@@ -74,7 +77,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8 text-center">Our Products</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {products.map((product) => (
+            {productsJSON.map((product) => (
               <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Image
                   src={product.image || "/placeholder.svg"}
