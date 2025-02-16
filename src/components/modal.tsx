@@ -29,7 +29,7 @@ export function Modal({
         >
             <DialogOverlay className="bg-transparent">
                 <DialogHeader>
-                    <DialogTitle>Modal</DialogTitle>
+                    <DialogTitle></DialogTitle>
                 </DialogHeader>
                 <DialogContent className="overflow-scroll max-w-3xl">
                     {children}
