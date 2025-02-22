@@ -1,5 +1,7 @@
 import { randomUUID } from "crypto";
+import { relations } from "drizzle-orm";
 import { numeric, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { images } from "./images";
 
 export const products = pgTable('products', {
     id: text('id')
@@ -18,3 +20,10 @@ export const products = pgTable('products', {
       .notNull()
       .$onUpdate(() => new Date()),
   });
+
+  //products to images one-to-many relationship
+export const productRelations = relations(products, 
+    ({ many }) => ({
+        images: many(images),
+    })
+);
