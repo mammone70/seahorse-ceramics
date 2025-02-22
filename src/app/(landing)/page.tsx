@@ -1,4 +1,4 @@
-import { getProductsServerAction } from "@/actions/products"
+import { getFeaturedProductServerAction, getHeroProductServerAction, getProductsServerAction } from "@/actions/products"
 
 import { HeroSection } from "./_sections/hero"
 import { FeaturedProductSection } from "./_sections/featured-product"
@@ -19,17 +19,19 @@ import { ProductGridSection } from "./_sections/product-grid"
 export default async function Home() {
 
   const products = await getProductsServerAction();
+  const heroProduct = await getHeroProductServerAction();
+  const featuredProduct = await getFeaturedProductServerAction();
 
   return (
     <main className="bg-gradient-to-r from-sky-300 to-cyan-100">
       
       {/* TODO pull specific products for different sections from db */}
-      
+
       {/* Hero Section */}
-      <HeroSection heroProduct={products[0]}/>
+      <HeroSection heroProduct={heroProduct}/>
 
       {/* Featured Product */}
-      <FeaturedProductSection featuredProduct={products[1]}/>
+      <FeaturedProductSection featuredProduct={featuredProduct}/>
 
       {/* Product Grid */}
       <ProductGridSection products={products}/>

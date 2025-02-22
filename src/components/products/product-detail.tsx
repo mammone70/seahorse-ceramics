@@ -34,7 +34,7 @@ import { getProductById } from "@/dao/products"
 //   },
 // ]
 
-export default async function ProductDetail({ id } : { id : number } ) {
+export default async function ProductDetail({ id } : { id : string } ) {
 
     const product = await getProductById(id);
 

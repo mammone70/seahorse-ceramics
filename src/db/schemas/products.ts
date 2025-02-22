@@ -1,7 +1,11 @@
-import { numeric, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { randomUUID } from "crypto";
+import { numeric, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const products = pgTable('products', {
-    id: serial('id').primaryKey(),
+    id: text('id')
+        .primaryKey()
+        .notNull()
+        .$defaultFn(() => randomUUID()),    
     name: text('name').notNull(),
     description: text('description').notNull(),
     price: numeric({
