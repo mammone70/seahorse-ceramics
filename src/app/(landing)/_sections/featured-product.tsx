@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
-
 import Image from "next/image"
 import { Product } from "@/dao/products";
 import Link from "next/link";
+import AddToCartButton from "@/components/products/add-to-cart-button";
 
 
 export function FeaturedProductSection({ featuredProduct } : { featuredProduct : Product }){
@@ -27,7 +26,7 @@ export function FeaturedProductSection({ featuredProduct } : { featuredProduct :
                             {featuredProduct.description}
                         </p>
                         <p className="text-2xl font-bold mb-4">{featuredProduct.price}</p>
-                        <Button>Add to Cart</Button>
+                        <AddToCartButton></AddToCartButton>
                         </div>
                     </div>
                 </div>

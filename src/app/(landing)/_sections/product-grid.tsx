@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
-
 import Image from "next/image"
 import { Product } from "@/dao/products";
 import Link from "next/link";
+import AddToCartButton from "@/components/products/add-to-cart-button";
 
 
 export function ProductGridSection({ products } : { products : Product[] }){
@@ -24,9 +23,7 @@ export function ProductGridSection({ products } : { products : Product[] }){
                   <div className="p-4">
                     <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
                     <p className="text-gray-600 mb-4">${product.price}</p>
-                    <Button variant="outline" className="w-full">
-                      Add to Cart
-                    </Button>
+                    <AddToCartButton></AddToCartButton>
                   </div>
                 </Link> 
               </div>
