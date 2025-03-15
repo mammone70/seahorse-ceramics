@@ -1,10 +1,14 @@
+"use client"
 import Link from "next/link"
 import Image from "next/image";
 
 import { ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useCart } from "@/components/cart/cart-provider";
 
 export default function Header() {
+  const { setIsOpen, totalItems } = useCart()
+
   return (
     <header className="border-b-2 shadow-sm">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -40,8 +44,13 @@ export default function Header() {
             </li>
           </ul>
         </nav>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" onClick={() => setIsOpen(true)} className="relative">
           <ShoppingCart className="h-4 w-4" />
+          {totalItems > 0 && (
+            <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {totalItems}
+            </span>
+          )}
           <span className="sr-only">Cart</span>
         </Button>
       </div>

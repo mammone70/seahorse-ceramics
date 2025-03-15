@@ -22,9 +22,9 @@ export default async function Home() {
   const heroProduct = await getHeroProductServerAction();
   const featuredProduct = await getFeaturedProductServerAction();
 
+
   return (
     <main className="bg-gradient-to-r from-sky-300 to-cyan-100">
-      
       {/* TODO pull specific products for different sections from db */}
 
       {/* Hero Section */}

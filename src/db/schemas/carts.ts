@@ -8,14 +8,14 @@ export const carts = pgTable('carts', {
         .primaryKey()
         .notNull()
         .$defaultFn(() => randomUUID()),    
-    user: text('userId').notNull(),
+    user: text('userId').notNull().unique(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')
       .notNull()
       .$onUpdate(() => new Date()),
   });
 
-  //products to cartItems one-to-many relationship
+//products to cartItems one-to-many relationship
 export const cartCartItemRelations = relations(carts, 
     ({ many }) => ({
         cartItems: many(cartItems),
