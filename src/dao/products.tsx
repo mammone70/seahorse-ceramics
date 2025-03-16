@@ -7,7 +7,8 @@ export interface Product {
     id : string,
     name : string,
     description : string,
-    price : string | null,
+    price : string,
+    stock : number,
     imageURL : string | null,
 }
 

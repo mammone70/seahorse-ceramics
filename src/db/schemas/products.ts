@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { relations } from "drizzle-orm";
-import { numeric, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, numeric, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { images } from "./images";
 import { cartItems } from "./cartItems";
 
@@ -11,10 +11,14 @@ export const products = pgTable('products', {
         .$defaultFn(() => randomUUID()),    
     name: text('name').notNull(),
     description: text('description').notNull(),
-    price: numeric({
-        precision : 100,
-        scale: 2,
-    }),
+    price: 
+        numeric({
+            precision : 100,
+            scale: 2,
+        })
+        .default('0.00')
+        .notNull(),
+    stock : integer().default(0).notNull(),
     imageURL : text('image_url'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')

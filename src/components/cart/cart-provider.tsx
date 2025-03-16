@@ -6,8 +6,8 @@ import { createContext, useContext, useState, useEffect } from "react"
 export type CartItem = {
   id: string
   name: string
-  price: number
-  image: string
+  price: string
+  image: string | null
   quantity: number
 }
 
@@ -45,7 +45,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     // Calculate totals
     setTotalItems(items.reduce((total, item) => total + item.quantity, 0))
-    setTotalPrice(items.reduce((total, item) => total + item.price * item.quantity, 0))
+    setTotalPrice(items.reduce((total, item) => total + parseInt(item.price) * item.quantity, 0))
   }, [items])
 
   const addItem = (newItem: Omit<CartItem, "quantity">) => {
