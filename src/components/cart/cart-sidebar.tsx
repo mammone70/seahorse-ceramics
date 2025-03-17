@@ -30,7 +30,7 @@ export function CartSidebar() {
                 <div key={item.id} className="flex py-4">
                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border">
                     <Image
-                      src={item.image || "/placeholder.svg"}
+                      src={item.imageUrl || "/placeholder.svg"}
                       alt={item.name}
                       width={100}
                       height={100}

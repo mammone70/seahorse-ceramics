@@ -32,7 +32,7 @@ export default function ProductDetail({ id } : { id : string } ) {
         };
 
         getProduct();
-    }, [id, product]);
+    }, [id]);
     
     // if (!product) {
     //     notFound()
@@ -47,15 +47,17 @@ export default function ProductDetail({ id } : { id : string } ) {
     }
 
     const handleAddToCart = () => {
-        addItem({
-            id: product?.id,
-            name: product?.name,
-            price: product?.price,
-            image: product?.imageURL,
-        })
+        if (product){
+            addItem({
+                id : product.id,
+                name : product.name,
+                price : parseFloat(product.price),
+                imageUrl : product.imageURL,
+            })
 
-        // Open the cart sidebar
-        setIsOpen(true)
+            // Open the cart sidebar
+            setIsOpen(true)
+        }
     }   
     return (
         <div className="container mx-auto px-4 py-8">
