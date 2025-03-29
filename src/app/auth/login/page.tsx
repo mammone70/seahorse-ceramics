@@ -11,21 +11,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { useAuth } from "@/components/auth/auth-provider"
+import { LoginAction } from "@/actions/auth"
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { login, user, isLoading } = useAuth()
   const router = useRouter()
-
-  // If already logged in, redirect to admin dashboard
-  if (user && !isLoading) {
-    router.push("/admin/dashboard")
-    return null
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,11 +32,11 @@ export default function AdminLogin() {
     setIsSubmitting(true)
 
     try {
-      const success = await login(email, password)
-      if (success) {
-        router.push("/admin/dashboard")
-      } else {
+      const {error} = await LoginAction({email, password})
+      if (error) {
         setError("Invalid email or password")
+      } else {
+        router.push("/dashboard")
       }
     } catch (err) {
       setError("An error occurred during login")
@@ -53,7 +46,7 @@ export default function AdminLogin() {
     }
   }
 
-  if (isLoading) {
+  if (isSubmitting) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

@@ -1,21 +1,11 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { LoginSchema } from '@/schemas/loginSchema'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import * as z from "zod";
-
-export const LoginSchema = z.object({
-    email : z.string({
-        message : "Must provide Email address"
-    })
-            .email(),
-    password : z.string({
-        message : "Must provide Password"
-    }),    
-})
-
 
 export const LoginAction 
     = async (params : z.infer<typeof LoginSchema>) => {
@@ -26,17 +16,15 @@ export const LoginAction
         return { error: "Invalid params!", };
     }
 
-    //get user
     const supabase = await createClient()
 
-    const { error } = await supabase.auth.signInWithPassword(validatedParams.data)
+    const response = await supabase.auth.signInWithPassword(validatedParams.data)
+    return {error : response.error, user : response.data.user};
+}
 
-    if (error) {
-        redirect('/error')
-    }
-
-    revalidatePath('/', 'layout')
-    redirect('/')
+export const LogoutAction = async () => {
+  const supabase = await createClient()
+  supabase.auth.signOut();
 }
 
 export async function signup(formData: FormData) {
