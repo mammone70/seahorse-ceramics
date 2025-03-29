@@ -4,7 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 
 export type CartItem = {
-  id: string
+  productId: string
   name: string
   price: number
   imageUrl: string | null
@@ -50,11 +50,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = (newItem: Omit<CartItem, "quantity">) => {
     setItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === newItem.id)
+      const existingItem = prevItems.find((item) => item.productId === newItem.productId)
 
       if (existingItem) {
         // If item already exists, increase quantity
-        return prevItems.map((item) => (item.id === newItem.id ? { ...item, quantity: item.quantity + 1 } : item))
+        return prevItems.map((item) => (item.productId === newItem.productId ? { ...item, quantity: item.quantity + 1 } : item))
       } else {
         // Otherwise add new item with quantity 1
         return [...prevItems, { ...newItem, quantity: 1 }]
@@ -63,7 +63,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }
 
   const removeItem = (id: string) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id))
+    setItems((prevItems) => prevItems.filter((item) => item.productId !== id))
   }
 
   const updateQuantity = (id: string, quantity: number) => {
@@ -72,7 +72,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity } : item)))
+    setItems((prevItems) => prevItems.map((item) => (item.productId === id ? { ...item, quantity } : item)))
   }
 
   const clearCart = () => {

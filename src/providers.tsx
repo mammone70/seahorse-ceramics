@@ -8,6 +8,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { CartProvider } from '@/components/cart/cart-provider'
+import { AuthProvider } from './components/auth/auth-provider'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -46,9 +47,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
         <CartProvider>
             {children}
         </CartProvider>    
+        </AuthProvider>
     </QueryClientProvider>
   )
 }

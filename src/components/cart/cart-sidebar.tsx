@@ -27,7 +27,7 @@ export function CartSidebar() {
           <>
             <div className="flex-1 overflow-y-auto py-4">
               {items.map((item) => (
-                <div key={item.id} className="flex py-4">
+                <div key={item.productId} className="flex py-4">
                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border">
                     <Image
                       src={item.imageUrl || "/placeholder.svg"}
@@ -48,7 +48,7 @@ export function CartSidebar() {
                         variant="outline"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                       >
                         <Minus className="h-3 w-3" />
                       </Button>
@@ -57,7 +57,7 @@ export function CartSidebar() {
                         variant="outline"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                       >
                         <Plus className="h-3 w-3" />
                       </Button>
@@ -65,7 +65,7 @@ export function CartSidebar() {
                         variant="ghost"
                         size="icon"
                         className="ml-auto h-8 w-8 text-destructive"
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeItem(item.productId)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

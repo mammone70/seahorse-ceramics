@@ -49,7 +49,7 @@ export default function ProductDetail({ id } : { id : string } ) {
     const handleAddToCart = () => {
         if (product){
             addItem({
-                id : product.id,
+                productId : product.id,
                 name : product.name,
                 price : parseFloat(product.price),
                 imageUrl : product.imageURL,
