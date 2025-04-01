@@ -29,7 +29,7 @@ export default function AdminHeader() {
             
             //TODO error check
 
-            if(data)
+            if(!error && data)
                 setUser(data?.user)
         }
         getUser()
@@ -65,17 +65,17 @@ export default function AdminHeader() {
                 </Link>
                 </li>
                 <li>
-                <Link href="/admin/dashboard?tab=products" className="text-gray-600 hover:text-gray-900">
+                <Link href="/admin/products" className="text-gray-600 hover:text-gray-900">
                     Products
                 </Link>
                 </li>
                 <li>
-                <Link href="/admin/dashboard?tab=orders" className="text-gray-600 hover:text-gray-900">
+                <Link href="/admin/orders" className="text-gray-600 hover:text-gray-900">
                     Orders
                 </Link>
                 </li>
                 <li>
-                <Link href="/admin/dashboard?tab=customers" className="text-gray-600 hover:text-gray-900">
+                <Link href="/admin/customers" className="text-gray-600 hover:text-gray-900">
                     Customers
                 </Link>
                 </li>

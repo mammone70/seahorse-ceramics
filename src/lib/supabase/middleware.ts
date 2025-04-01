@@ -1,7 +1,11 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const protectedRoutes = ['/dashboard']
+const protectedRoutes = 
+  [
+    '/admin/dashboard',
+    '/admin/products',
+  ]
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
