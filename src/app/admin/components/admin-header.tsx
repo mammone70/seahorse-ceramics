@@ -22,7 +22,7 @@ import { User as SupabaseUser } from "@supabase/supabase-js"
 export default function AdminHeader() {
     const [user, setUser] = useState<SupabaseUser | null>(null)
     const router = useRouter();
-    
+
     useEffect(() => {
         const getUser = async () => {
             const supabase = createClient();
@@ -41,7 +41,7 @@ export default function AdminHeader() {
             
         try {
             await LogoutAction()
-            router.push("/dashboard")
+            router.push("/admin/dashboard")
         } catch (err) {
         //   setError("An error occurred during login")
           console.error(err)

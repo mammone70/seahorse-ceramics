@@ -36,7 +36,7 @@ export default function AdminLogin() {
       if (error) {
         setError("Invalid email or password")
       } else {
-        router.push("/dashboard")
+        router.push("/admin/dashboard")
       }
     } catch (err) {
       setError("An error occurred during login")
@@ -111,11 +111,6 @@ export default function AdminLogin() {
             </Link>
           </CardFooter>
         </Card>
-        <div className="mt-4 text-center text-sm text-gray-500">
-          <p>Demo credentials:</p>
-          <p>Email: admin@ceramiccraft.com</p>
-          <p>Password: admin123</p>
-        </div>
       </div>
     </div>
   )
