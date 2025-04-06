@@ -14,13 +14,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { LogOut, User } from "lucide-react"
 import { LogoutAction } from "@/actions/auth"
-import router from "next/router"
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { User as SupabaseUser } from "@supabase/supabase-js"
 
 export default function AdminHeader() {
     const [user, setUser] = useState<SupabaseUser | null>(null)
+    const router = useRouter();
     
     useEffect(() => {
         const getUser = async () => {
