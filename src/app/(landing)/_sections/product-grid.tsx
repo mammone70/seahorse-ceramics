@@ -1,17 +1,44 @@
+"use client"
+
 import Image from "next/image"
 import { Product } from "@/dao/products";
 import Link from "next/link";
 import AddToCartButton from "@/components/products/add-to-cart-button";
+import { motion } from "framer-motion";
+import { productCardAnimation, staggerContainer } from "@/lib/animation";
 
 
 export function ProductGridSection({ products } : { products : Product[] }){
     return (
         <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-8 text-center">Our Products</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {products.map((product) => (
-              <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+          <motion.h2 
+            className="text-3xl font-bold mb-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}  
+          >
+              Our Products
+          </motion.h2>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+              {products.map((product, index) => (
+              <motion.div
+                key={product.id}
+                className="bg-white rounded-lg shadow-md overflow-hidden"
+                variants={productCardAnimation}
+                custom={index}
+                whileHover={{
+                  y: -10,
+                  transition: { duration: 0.2 },
+                }}
+              >
                 <Link href={`/products/${product.id}`}>
                   <Image
                     src={product.imageURL || "/placeholder.svg"}
@@ -26,9 +53,9 @@ export function ProductGridSection({ products } : { products : Product[] }){
                     <AddToCartButton></AddToCartButton>
                   </div>
                 </Link> 
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>    
     )
