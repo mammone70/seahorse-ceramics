@@ -2,7 +2,7 @@ import "../globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import type React from "react" // Added import for React
-import AdminHeader from "./components/admin-header"
+import AdminHeader from "./_components/admin-header"
 
 const inter = Inter({ subsets: ["latin"] })
 

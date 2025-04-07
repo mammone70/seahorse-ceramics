@@ -59,28 +59,28 @@ export default function AdminHeader() {
                     className="rounded-full"/>
             </Link>
             <nav>
-            <ul className="flex space-x-4">
-                <li>
-                <Link href="/admin/dashboard" className="text-gray-600 hover:text-gray-900">
-                    Dashboard
-                </Link>
-                </li>
-                <li>
-                <Link href="/admin/products" className="text-gray-600 hover:text-gray-900">
-                    Products
-                </Link>
-                </li>
-                <li>
-                <Link href="/admin/orders" className="text-gray-600 hover:text-gray-900">
-                    Orders
-                </Link>
-                </li>
-                <li>
-                <Link href="/admin/customers" className="text-gray-600 hover:text-gray-900">
-                    Customers
-                </Link>
-                </li>
-            </ul>
+                <ul className="flex space-x-4">
+                    <li>
+                    <Link href="/admin/dashboard" className="text-gray-600 hover:text-gray-900">
+                        Dashboard
+                    </Link>
+                    </li>
+                    <li>
+                    <Link href="/admin/products" className="text-gray-600 hover:text-gray-900">
+                        Products
+                    </Link>
+                    </li>
+                    <li>
+                    <Link href="/admin/orders" className="text-gray-600 hover:text-gray-900">
+                        Orders
+                    </Link>
+                    </li>
+                    <li>
+                    <Link href="/admin/customers" className="text-gray-600 hover:text-gray-900">
+                        Customers
+                    </Link>
+                    </li>
+                </ul>
             </nav>
             <div className="flex items-center">
             <DropdownMenu>
