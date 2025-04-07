@@ -1,3 +1,5 @@
+import { Description } from "@radix-ui/react-dialog";
+import { desc } from "drizzle-orm";
 import * as z from "zod";
 
 export const GetProductByIdSchema = 
@@ -7,29 +9,31 @@ export const GetProductByIdSchema =
         }))
     });
 
-// export const AddToCartSchema = 
-//     z.object({
-//         id : z.string(({
-//             message : "ID is required"
-//         })),
-//         name : z.string(({
-//             message : "Product Name is required"
-//         })),
-//         price : z
-//             .preprocess(
-//                 (a) => parseFloat(z.string().parse(a)),
-//                     z.number({
-//                         message : "Price must be number"
-//                     })
-//             ),
-//         imageUrl : z.string().url({
-//             message : "Must provide a valid Image URL"
-//         }),
-//         quantity : z
-//             .number()
-//             .nonnegative()
-//             .multipleOf(1)
-//             .safe({
-//                 message : "Quantity must be a positive, whole number",
-//             })
-//     });
+export const AddProductSchema = 
+    z.object({
+        name : z.string(({
+            message : "Product Name is required"
+        })),
+        description : z.string(({
+            message : "Product Description is required"
+        })),
+        price : z
+            .number()
+            .refine( n => {
+                return n.toString().split( '.' )[ 1 ].length <= 2
+            }, { message: 'Max precision is 2 decimal places' } ),
+            // .preprocess(
+            //     (a) => parseFloat(z.string().parse(a)),
+            //         z.number({
+            //             message : "Price must be number"
+            //         })
+            // ),
+        imageUrl : z.string().optional(),
+        quantity : z
+            .number()
+            .nonnegative()
+            .multipleOf(1)
+            .safe({
+                message : "Quantity must be a positive, whole number",
+            }),
+    });

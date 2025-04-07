@@ -12,7 +12,10 @@ function ProductsHeader() {
         <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">Products</h1>
             <AddProductDialogButton onClick={handleAddProductClick}/>
-            <AddProductDialog isOpen={isAddDialogOpen}/>
+            <AddProductDialog 
+                isOpen={isAddDialogOpen}
+                onOpenChange={setIsAddDialogOpen}    
+            />
         </div>
   )
 }
