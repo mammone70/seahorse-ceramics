@@ -37,7 +37,7 @@ export default function ComingSoon() {
                 <h1 className="text-4xl md:text-6xl font-bold mb-4 text-gray-900">Something Beautiful is Coming Soon</h1>
                 <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                   We&apos;re crafting a new collection of handmade ceramics that will transform your home. Stay tuned for our
-                  exclusive launch.
+                  exclusive launch!
                 </p>
               </motion.div>
       
