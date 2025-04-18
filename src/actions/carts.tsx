@@ -31,6 +31,6 @@ export const AddItemToCartServerAction
         //get user
         const supabase = await createClient()
 
-        const { data, error } = await supabase.auth.getUser()
+        const { data } = await supabase.auth.getUser()
         console.log(data);
 }

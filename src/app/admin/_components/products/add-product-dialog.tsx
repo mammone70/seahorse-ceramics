@@ -19,9 +19,6 @@ import {
   } from "@/components/ui/form"
 
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import { AddProductSchema } from "@/schemas/productSchemas"
 import { ImagePlus } from "lucide-react"
 
@@ -65,7 +62,7 @@ function AddProductDialog(props : AddProductDialogProps) {
                                     <FormField
                                         control={form.control}
                                         name="name"
-                                        render={({ field }) => (
+                                        render={({  }) => (
                                             <FormItem>
                                                 <FormLabel>Product Name</FormLabel>
                                                 <FormControl>
@@ -91,7 +88,7 @@ function AddProductDialog(props : AddProductDialogProps) {
                                     <FormField
                                         control={form.control}
                                         name="price"
-                                        render={({ field }) => (
+                                        render={({  }) => (
                                             <FormItem>
                                                 <FormLabel>Price ($)</FormLabel>
                                                 <FormControl>
@@ -109,7 +106,7 @@ function AddProductDialog(props : AddProductDialogProps) {
                                     <FormField
                                         control={form.control}
                                         name="name"
-                                        render={({ field }) => (
+                                        render={({  }) => (
                                             <FormItem>
                                                 <FormLabel>Quantity</FormLabel>
                                                 <FormControl>
@@ -127,7 +124,7 @@ function AddProductDialog(props : AddProductDialogProps) {
                                     <FormField
                                         control={form.control}
                                         name="name"
-                                        render={({ field }) => (
+                                        render={({  }) => (
                                             <FormItem>
                                                 <FormLabel>Description</FormLabel>
                                                 <FormControl>
@@ -146,7 +143,7 @@ function AddProductDialog(props : AddProductDialogProps) {
                                 <FormField
                                     control={form.control}
                                     name="name"
-                                    render={({ field }) => (
+                                    render={({  }) => (
                                         <FormItem>
                                             <FormLabel>Description</FormLabel>
                                             <FormControl>
