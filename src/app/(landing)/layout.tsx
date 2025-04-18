@@ -45,7 +45,7 @@ import Footer from "@/components/footer"
 import type React from "react" // Added import for React
 import { CartSidebar } from "@/components/cart/cart-sidebar"
 import Providers from "@/providers"
-// import ComingSoon from "./_sections/coming-soon"
+import ComingSoon from "./_sections/coming-soon"
 
 export const metadata: Metadata = {
   title: "Handcrafted Ceramics",
@@ -56,19 +56,19 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
   modal
-}: Readonly<{
+}: {
   children: React.ReactNode
   modal: React.ReactNode
-}>) {
+}) {
 
-  // if(process.env.COMING_SOON){
-  //   return (
-  //     <>
-  //       <ComingSoon/>
-  //     </>
-  //   )
-  // }
-  // else
+  if(process.env.COMING_SOON){
+    return (
+      <>
+        <ComingSoon/>
+      </>
+    )
+  }
+  else
     return (
         <>
           {/* <Background/> */}
