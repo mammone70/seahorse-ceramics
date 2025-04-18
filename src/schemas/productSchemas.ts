@@ -1,5 +1,3 @@
-import { Description } from "@radix-ui/react-dialog";
-import { desc } from "drizzle-orm";
 import * as z from "zod";
 
 export const GetProductByIdSchema = 
