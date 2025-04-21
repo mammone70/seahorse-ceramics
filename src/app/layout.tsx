@@ -38,6 +38,7 @@
 //   );
 // }
 
+import Providers from "@/providers"
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
@@ -60,7 +61,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-gradient-to-r from-sky-300 to-cyan-100 text-gray-900`}>
-            {children}
+            <Providers>
+              {children}
+            </Providers>
       </body>
     </html>
   )

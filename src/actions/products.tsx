@@ -2,18 +2,18 @@
 
 import * as z from "zod";
 
-import { getFeaturedProduct, getHeroProduct, getProductById, getProducts, Product } from "@/dao/products";
+import { getFeaturedProduct, getHeroProduct, getProductById, getProducts, TProduct } from "@/dao/products";
 import { GetProductByIdSchema } from "@/schemas/productSchemas";
 
-export async function getProductsServerAction() : Promise<Product[]> {
+export async function getProductsServerAction() : Promise<TProduct[]> {
     return getProducts();
 }
 
-export async function getHeroProductServerAction() : Promise<Product> {
+export async function getHeroProductServerAction() : Promise<TProduct> {
     return getHeroProduct();
 }
 
-export async function getFeaturedProductServerAction() : Promise<Product> {
+export async function getFeaturedProductServerAction() : Promise<TProduct> {
     return getFeaturedProduct();  
 }
 

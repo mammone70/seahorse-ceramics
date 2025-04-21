@@ -1,14 +1,14 @@
 "use client"
 
 import Image from "next/image"
-import { Product } from "@/dao/products";
+import { TProduct } from "@/dao/products";
 import Link from "next/link";
 import AddToCartButton from "@/components/products/add-to-cart-button";
 import { motion } from "framer-motion";
 import { productCardAnimation, staggerContainer } from "@/lib/animation";
 
 
-export function ProductGridSection({ products } : { products : Product[] }){
+export function ProductGridSection({ products } : { products : TProduct[] }){
     return (
         <section className="py-16">
         <div className="container mx-auto px-4">

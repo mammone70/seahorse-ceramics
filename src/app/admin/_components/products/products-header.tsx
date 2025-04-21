@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from 'react'
 import AddProductDialogButton from './add-product-dialog-button'
 import AddProductDialog from './add-product-dialog'

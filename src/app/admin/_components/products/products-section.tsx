@@ -1,6 +1,5 @@
-// import { Button } from "@/components/ui/button"
-// import { Input } from "@/components/ui/input"
-// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 // import {
 //   Dialog,
 //   DialogContent,
@@ -9,25 +8,37 @@
 //   DialogHeader,
 //   DialogTitle,
 // } from "@/components/ui/dialog"
-// import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-// import { Label } from "@/components/ui/label"
-// import { Textarea } from "@/components/ui/textarea"
-// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-// import { Plus, Search, MoreHorizontal, Trash2, Edit, ImagePlus } from "lucide-react"
-// import Image from "next/image"
-// import { Badge } from "@/components/ui/badge"
-// import { Checkbox } from "@/components/ui/checkbox"
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Search, Trash2 } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { TProduct } from "@/dao/products"
 import ProductsHeader from "./products-header"
+import AdminProductsTable from "./products-table"
+// import { useQueryClient } from "@tanstack/react-query";
+// import { useState } from "react"
 
-function ProductsSection() {
+function ProductsSection({initialProducts} : {initialProducts : TProduct[]}) {
+
+  //const queryClient = useQueryClient();
+
+  // const [products] = useState<TProduct[]>(initialProducts)
+  // const [filteredProducts] = useState<TProduct[]>(initialProducts)
+  // const [searchQuery, setSearchQuery] = useState("")
+  // const [categoryFilter, setCategoryFilter] = useState("All Categories")
+  // const [statusFilter, setStatusFilter] = useState("All")
+  // const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  // const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  // const [currentProduct, setCurrentProduct] = useState<TProduct | null>(null)
+  // const [selectedProducts] = useState<string[]>([])
+  // const [isAllSelected] = useState(false)
+
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="container mx-auto px-4 py-8">
         <ProductsHeader/>
 
-        {/* <Card className="mb-6">
+        <Card className="mb-6">
           <CardHeader>
             <CardTitle>Product Management</CardTitle>
             <CardDescription>Manage your product inventory, add new products, or update existing ones.</CardDescription>
@@ -36,18 +47,18 @@ function ProductsSection() {
             <Tabs defaultValue="all" className="mb-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                 <TabsList>
-                  <TabsTrigger value="all">All Products ({products.length})</TabsTrigger>
-                  <TabsTrigger value="active">
+                  <TabsTrigger value="all">All Products ({initialProducts.length})</TabsTrigger>
+                  {/* <TabsTrigger value="active">
                     Active ({products.filter((p) => p.status === "Active").length})
                   </TabsTrigger>
-                  <TabsTrigger value="featured">Featured ({products.filter((p) => p.featured).length})</TabsTrigger>
+                  <TabsTrigger value="featured">Featured ({products.filter((p) => p.featured).length})</TabsTrigger> */}
                 </TabsList>
                 <div className="flex items-center gap-2">
-                  {selectedProducts.length > 0 && (
-                    <Button variant="outline" size="sm" onClick={handleBulkDelete} className="text-destructive">
+                  {/* {selectedProducts.length > 0 && ( */}
+                    <Button variant="outline" size="sm" className="text-destructive">
                       <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
                     </Button>
-                  )}
+                  {/* )} */}
                 </div>
               </div>
 
@@ -57,23 +68,23 @@ function ProductsSection() {
                   <Input
                     placeholder="Search products..."
                     className="pl-8"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    // value={searchQuery}
+                    // onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <Select>
                   <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  {/* <SelectContent>
                     {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
                       </SelectItem>
                     ))}
-                  </SelectContent>
+                  </SelectContent> */}
                 </Select>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select>
                   <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -88,309 +99,14 @@ function ProductsSection() {
 
               <TabsContent value="all">
                 <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[50px]">
-                          <Checkbox
-                            checked={isAllSelected}
-                            onCheckedChange={toggleSelectAll}
-                            aria-label="Select all products"
-                          />
-                        </TableHead>
-                        <TableHead className="w-[80px]">Image</TableHead>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Stock</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredProducts.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                            No products found. Try adjusting your search or filters.
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        filteredProducts.map((product) => (
-                          <TableRow key={product.id}>
-                            <TableCell>
-                              <Checkbox
-                                checked={selectedProducts.includes(product.id)}
-                                onCheckedChange={() => toggleSelectProduct(product.id)}
-                                aria-label={`Select ${product.name}`}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Image
-                                src={product.image || "/placeholder.svg"}
-                                alt={product.name}
-                                width={50}
-                                height={50}
-                                className="rounded-md object-cover"
-                              />
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {product.name}
-                              {product.featured && (
-                                <Badge variant="outline" className="ml-2 bg-primary/10 text-primary">
-                                  Featured
-                                </Badge>
-                              )}
-                              <div className="text-xs text-muted-foreground">SKU: {product.sku}</div>
-                            </TableCell>
-                            <TableCell>{product.category}</TableCell>
-                            <TableCell>${product.price.toFixed(2)}</TableCell>
-                            <TableCell>{product.stock}</TableCell>
-                            <TableCell>
-                              <Badge variant={product.status === "Active" ? "default" : "secondary"}>
-                                {product.status}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon">
-                                    <MoreHorizontal className="h-4 w-4" />
-                                    <span className="sr-only">Actions</span>
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem
-                                    onClick={() => {
-                                      setCurrentProduct(product)
-                                      setIsEditDialogOpen(true)
-                                    }}
-                                  >
-                                    <Edit className="mr-2 h-4 w-4" /> Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() => {
-                                      setCurrentProduct(product)
-                                      setIsDeleteDialogOpen(true)
-                                    }}
-                                    className="text-destructive"
-                                  >
-                                    <Trash2 className="mr-2 h-4 w-4" /> Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
+                    <AdminProductsTable products={initialProducts}/>
                 </div>
               </TabsContent>
 
-              <TabsContent value="active">
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[50px]">
-                          <Checkbox
-                            checked={isAllSelected}
-                            onCheckedChange={toggleSelectAll}
-                            aria-label="Select all products"
-                          />
-                        </TableHead>
-                        <TableHead className="w-[80px]">Image</TableHead>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Stock</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredProducts.filter((p) => p.status === "Active").length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                            No active products found.
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        filteredProducts
-                          .filter((p) => p.status === "Active")
-                          .map((product) => (
-                            <TableRow key={product.id}>
-                              <TableCell>
-                                <Checkbox
-                                  checked={selectedProducts.includes(product.id)}
-                                  onCheckedChange={() => toggleSelectProduct(product.id)}
-                                  aria-label={`Select ${product.name}`}
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Image
-                                  src={product.image || "/placeholder.svg"}
-                                  alt={product.name}
-                                  width={50}
-                                  height={50}
-                                  className="rounded-md object-cover"
-                                />
-                              </TableCell>
-                              <TableCell className="font-medium">
-                                {product.name}
-                                {product.featured && (
-                                  <Badge variant="outline" className="ml-2 bg-primary/10 text-primary">
-                                    Featured
-                                  </Badge>
-                                )}
-                                <div className="text-xs text-muted-foreground">SKU: {product.sku}</div>
-                              </TableCell>
-                              <TableCell>{product.category}</TableCell>
-                              <TableCell>${product.price.toFixed(2)}</TableCell>
-                              <TableCell>{product.stock}</TableCell>
-                              <TableCell>
-                                <Badge variant="default">{product.status}</Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon">
-                                      <MoreHorizontal className="h-4 w-4" />
-                                      <span className="sr-only">Actions</span>
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem
-                                      onClick={() => {
-                                        setCurrentProduct(product)
-                                        setIsEditDialogOpen(true)
-                                      }}
-                                    >
-                                      <Edit className="mr-2 h-4 w-4" /> Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      onClick={() => {
-                                        setCurrentProduct(product)
-                                        setIsDeleteDialogOpen(true)
-                                      }}
-                                      className="text-destructive"
-                                    >
-                                      <Trash2 className="mr-2 h-4 w-4" /> Delete
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="featured">
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[50px]">
-                          <Checkbox
-                            checked={isAllSelected}
-                            onCheckedChange={toggleSelectAll}
-                            aria-label="Select all products"
-                          />
-                        </TableHead>
-                        <TableHead className="w-[80px]">Image</TableHead>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Stock</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredProducts.filter((p) => p.featured).length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                            No featured products found.
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        filteredProducts
-                          .filter((p) => p.featured)
-                          .map((product) => (
-                            <TableRow key={product.id}>
-                              <TableCell>
-                                <Checkbox
-                                  checked={selectedProducts.includes(product.id)}
-                                  onCheckedChange={() => toggleSelectProduct(product.id)}
-                                  aria-label={`Select ${product.name}`}
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Image
-                                  src={product.image || "/placeholder.svg"}
-                                  alt={product.name}
-                                  width={50}
-                                  height={50}
-                                  className="rounded-md object-cover"
-                                />
-                              </TableCell>
-                              <TableCell className="font-medium">
-                                {product.name}
-                                <Badge variant="outline" className="ml-2 bg-primary/10 text-primary">
-                                  Featured
-                                </Badge>
-                                <div className="text-xs text-muted-foreground">SKU: {product.sku}</div>
-                              </TableCell>
-                              <TableCell>{product.category}</TableCell>
-                              <TableCell>${product.price.toFixed(2)}</TableCell>
-                              <TableCell>{product.stock}</TableCell>
-                              <TableCell>
-                                <Badge variant={product.status === "Active" ? "default" : "secondary"}>
-                                  {product.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon">
-                                      <MoreHorizontal className="h-4 w-4" />
-                                      <span className="sr-only">Actions</span>
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem
-                                      onClick={() => {
-                                        setCurrentProduct(product)
-                                        setIsEditDialogOpen(true)
-                                      }}
-                                    >
-                                      <Edit className="mr-2 h-4 w-4" /> Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      onClick={() => {
-                                        setCurrentProduct(product)
-                                        setIsDeleteDialogOpen(true)
-                                      }}
-                                      className="text-destructive"
-                                    >
-                                      <Trash2 className="mr-2 h-4 w-4" /> Delete
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
+              
             </Tabs>
           </CardContent>
-        </Card> */}
+        </Card>
       </main> 
 
       {/* Add Product Dialog */}
@@ -553,7 +269,7 @@ function ProductsSection() {
           {currentProduct && (
             <div className="flex items-center gap-4 py-4">
               <Image
-                src={currentProduct.image || "/placeholder.svg"}
+                src={currentProduct.imageURL || "/placeholder.svg"}
                 alt={currentProduct.name}
                 width={60}
                 height={60}
@@ -561,7 +277,7 @@ function ProductsSection() {
               />
               <div>
                 <h3 className="font-medium">{currentProduct.name}</h3>
-                <p className="text-sm text-muted-foreground">SKU: {currentProduct.sku}</p>
+                <p className="text-sm text-muted-foreground">SKU: 12345</p>
               </div>
             </div>
           )}
@@ -569,7 +285,7 @@ function ProductsSection() {
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDeleteProduct}>
+            <Button variant="destructive">
               Delete Product
             </Button>
           </DialogFooter>

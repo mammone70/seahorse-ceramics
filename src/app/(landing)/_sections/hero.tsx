@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
 import Image from "next/image"
-import { Product } from "@/dao/products";
+import { TProduct } from "@/dao/products";
 import { fadeIn, heroImageAnimation, staggerContainer } from "@/lib/animation";
 import { motion } from "framer-motion";
 
 
-export function HeroSection({ heroProduct } : { heroProduct : Product }){
+export function HeroSection({ heroProduct } : { heroProduct : TProduct }){
     return (
         <section className=" py-20">
             <div className="container mx-auto px-4">

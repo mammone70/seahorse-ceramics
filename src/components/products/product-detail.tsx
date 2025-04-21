@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Minus, Plus } from "lucide-react"
-import { Product } from "@/dao/products"
+import { TProduct } from "@/dao/products"
 import { useEffect, useState } from "react"
 import { useCart } from "@/components/cart/cart-provider"
 import { getProductByIdServerAction } from "@/actions/products"
@@ -15,7 +15,7 @@ export default function ProductDetail({ id } : { id : string } ) {
 
     const [quantity, setQuantity] = useState(1);
     const { addItem, setIsOpen } = useCart();
-    const [product, setProduct] = useState<Product>();
+    const [product, setProduct] = useState<TProduct>();
 
     useEffect(() => {
         const getProduct = async () => {

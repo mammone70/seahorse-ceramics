@@ -1,14 +1,14 @@
 "use client"
 
 import Image from "next/image"
-import { Product } from "@/dao/products";
+import { TProduct } from "@/dao/products";
 import Link from "next/link";
 import AddToCartButton from "@/components/products/add-to-cart-button";
 import { motion } from "framer-motion";
 import { fadeIn } from "@/lib/animation";
 
 
-export function FeaturedProductSection({ featuredProduct } : { featuredProduct : Product }){
+export function FeaturedProductSection({ featuredProduct } : { featuredProduct : TProduct }){
     return (
         <motion.section
             className="py-16"
