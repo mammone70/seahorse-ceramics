@@ -19,13 +19,13 @@ import {
   } from "@/components/ui/form"
 
 import { Input } from "@/components/ui/input"
-import { AddProductSchema } from "@/schemas/productSchemas"
-import { ImagePlus } from "lucide-react"
 
 import { useForm } from "react-hook-form"
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
+import { uploadFile } from "@/lib/file-storage"
+import { addProductServerAction } from "@/actions/products"
 
 // Product categories
 // const categories = ["All Categories", "Vases", "Bowls", "Mugs", "Plates", "Planters", "Sets", "Home Decor", "Bathroom"]
@@ -35,14 +35,82 @@ interface AddProductDialogProps {
     onOpenChange : (open : boolean) => void
 }
 
-function AddProductDialog(props : AddProductDialogProps) {
-    
-    const form = useForm<z.infer<typeof AddProductSchema>>({
-        resolver: zodResolver(AddProductSchema),
+
+const addProductFormSchema = z.object({
+        name : z.string(({
+            message : "Product Name is required"
+        })),
+        description : z.string(({
+            message : "Product Description is required"
+        })),
+        price : z
+            // .coerce
+            .string(({
+                message : "Price is required"
+            }))
+            .refine( n => {
+                const numberParts = n.toString().split( '.' );
+                return (numberParts.length > 1) 
+                    ? 
+                        numberParts[1].length <= 2
+                    :
+                        true
+            }, { message: 'Max precision is 2 decimal places' } ),
+        stock : z
+            .coerce
+            .number(({
+                message : "Quantity is required"
+            }))
+            .nonnegative()
+            .multipleOf(1)
+            .safe({
+                message : "Quantity must be a positive, whole number",
+            }
+        ),
+        image : z
+            .custom<FileList>((val) => val instanceof FileList, "Required")
+            .refine((files) => files.length > 0, `Required`),
     });
 
-    const onSubmit = (values: z.infer<typeof AddProductSchema>) => {
-        console.log(values);
+function AddProductDialog(props : AddProductDialogProps) {
+    
+    const form = useForm<z.infer<typeof addProductFormSchema>>({
+        resolver: zodResolver(addProductFormSchema),
+        defaultValues : {
+            name : "",
+            price : "",
+            image : undefined,
+            description : "",
+            stock : 0
+        }
+    });
+
+    const imageFileRef = form.register("image");
+
+    const onSubmit = 
+        async (values: z.infer<typeof addProductFormSchema>) => {
+            const { publicURL, errorMessage } = 
+                await uploadFile({
+                    imageFile : values.image[0]
+            });
+
+            if(errorMessage)
+                //TODO Toast
+                console.log(errorMessage)
+            
+            const newProduct = {
+                name : values.name,
+                description : values.description,
+                price : values.price,
+                stock : values.stock,
+                imageURL : publicURL
+            }
+            console.log(newProduct);
+
+            await addProductServerAction({
+                ...newProduct, 
+                imageURL : publicURL,
+            })
     };
 
     return (
@@ -62,16 +130,16 @@ function AddProductDialog(props : AddProductDialogProps) {
                                     <FormField
                                         control={form.control}
                                         name="name"
-                                        render={({  }) => (
+                                        render={({ field  }) => (
                                             <FormItem>
                                                 <FormLabel>Product Name</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Product Name" />
+                                                    <Input placeholder="Product Name" {...field} />
                                                 </FormControl>
                                                 <FormDescription>
                                                     {/* This is your public display name. */}
                                                 </FormDescription>
-                                                <FormMessage />
+                                                <FormMessage/>
                                             </FormItem>
                                         )}
                                     />
@@ -88,16 +156,16 @@ function AddProductDialog(props : AddProductDialogProps) {
                                     <FormField
                                         control={form.control}
                                         name="price"
-                                        render={({  }) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Price ($)</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Product Price" />
+                                                    <Input placeholder="Product Price" {...field} />
                                                 </FormControl>
                                                 <FormDescription>
                                                     {/* Price of the Product. */}
                                                 </FormDescription>
-                                                <FormMessage />
+                                                <FormMessage/>
                                             </FormItem>
                                         )}
                                     />
@@ -105,17 +173,17 @@ function AddProductDialog(props : AddProductDialogProps) {
                                 <div className="space-y-2">
                                     <FormField
                                         control={form.control}
-                                        name="name"
-                                        render={({  }) => (
+                                        name="stock"
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Quantity</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Quantity in stock" />
+                                                    <Input placeholder="Quantity in stock" {...field} />
                                                 </FormControl>
                                                 <FormDescription>
                                                     {/* Price of the Product. */}
                                                 </FormDescription>
-                                                <FormMessage />
+                                                <FormMessage/>
                                             </FormItem>
                                         )}
                                     />
@@ -123,17 +191,17 @@ function AddProductDialog(props : AddProductDialogProps) {
                                 <div className="space-y-2">
                                     <FormField
                                         control={form.control}
-                                        name="name"
-                                        render={({  }) => (
+                                        name="description"
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Description</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Product Price" />
+                                                    <Input placeholder="Product Description" {...field}/>
                                                 </FormControl>
                                                 <FormDescription>
-                                                    Price of the Product.
+                                                    {/* Price of the Product. */}
                                                 </FormDescription>
-                                                <FormMessage />
+                                                <FormMessage/>
                                             </FormItem>
                                         )}
                                     />
@@ -142,24 +210,21 @@ function AddProductDialog(props : AddProductDialogProps) {
                             <div className="space-y-2">
                                 <FormField
                                     control={form.control}
-                                    name="name"
+                                    name="image"
                                     render={({  }) => (
                                         <FormItem>
-                                            <FormLabel>Description</FormLabel>
+                                            <FormLabel>Image File</FormLabel>
                                             <FormControl>
-                                                <div className="border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center">
-                                                <ImagePlus className="h-8 w-8 text-muted-foreground mb-2" />
-                                                <p className="text-sm text-muted-foreground mb-1">Drag and drop an image here, or click to browse</p>
-                                                <p className="text-xs text-muted-foreground">Recommended size: 800x800px. Max file size: 5MB</p>
-                                                <Button variant="outline" size="sm" className="mt-4">
-                                                    Upload Image
-                                                </Button>
-                                            </div>
+                                                <Input 
+                                                    type="file" 
+                                                    placeholder="Select Product Image"
+                                                    {...imageFileRef}
+                                                />
                                             </FormControl>
                                             <FormDescription>
-                                            
+                                        
                                             </FormDescription>
-                                            <FormMessage />
+                                            <FormMessage/>
                                         </FormItem>
                                     )}
                                 />

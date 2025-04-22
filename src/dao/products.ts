@@ -12,6 +12,8 @@ export type TProduct = {
     imageURL : string | null,
 }
 
+export type TInsertProduct = Omit<TProduct, "id">;
+
 export async function getProducts() : Promise<TProduct[]> {
     const prods = await db.select({
         id : products.id,
@@ -55,4 +57,10 @@ export async function getDynamicProduct(productColName : string) : Promise<TProd
             .from(products)
             .leftJoin(content, sql`${whereClause}`);
     return results[0].products
+}
+
+export async function addProduct(newProduct : TInsertProduct) : Promise<void> {
+    await db
+        .insert(products)
+        .values(newProduct)
 }

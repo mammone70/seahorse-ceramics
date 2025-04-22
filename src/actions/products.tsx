@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 
-import { getFeaturedProduct, getHeroProduct, getProductById, getProducts, TProduct } from "@/dao/products";
+import { addProduct, getFeaturedProduct, getHeroProduct, getProductById, getProducts, TInsertProduct, TProduct } from "@/dao/products";
 import { GetProductByIdSchema } from "@/schemas/productSchemas";
 
 export async function getProductsServerAction() : Promise<TProduct[]> {
@@ -31,3 +31,11 @@ export async function getProductByIdServerAction(values : z.infer<typeof GetProd
     const product = await getProductById(id);
     return {product : product};
 }
+
+export async function addProductServerAction(
+        insertProduct : TInsertProduct
+    ) : Promise<void> {
+
+        await addProduct(insertProduct);
+    
+    }  
