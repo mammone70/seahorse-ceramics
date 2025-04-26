@@ -1,11 +1,15 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog"
 
 import {
@@ -26,14 +30,17 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { uploadFile } from "@/lib/file-storage"
 import { addProductServerAction } from "@/actions/products"
+import { useToast } from "@/hooks/use-toast"
+import { FilePlus, Plus } from "lucide-react"
+import { useState } from "react"
 
 // Product categories
 // const categories = ["All Categories", "Vases", "Bowls", "Mugs", "Plates", "Planters", "Sets", "Home Decor", "Bathroom"]
 
-interface AddProductDialogProps {
-    isOpen : boolean
-    onOpenChange : (open : boolean) => void
-}
+// interface AddProductDialogProps {
+//     isOpen : boolean
+//     onOpenChange : (open : boolean) => void
+// }
 
 
 const addProductFormSchema = z.object({
@@ -72,7 +79,10 @@ const addProductFormSchema = z.object({
             .refine((files) => files.length > 0, `Required`),
     });
 
-function AddProductDialog(props : AddProductDialogProps) {
+function AddProductDialog() {
+    const { toast } = useToast();
+    
+    const [isFileDialogOpen, setIsFileDialogOpen] = useState(false);
     
     const form = useForm<z.infer<typeof addProductFormSchema>>({
         resolver: zodResolver(addProductFormSchema),
@@ -89,32 +99,62 @@ function AddProductDialog(props : AddProductDialogProps) {
 
     const onSubmit = 
         async (values: z.infer<typeof addProductFormSchema>) => {
-            const { publicURL, errorMessage } = 
-                await uploadFile({
-                    imageFile : values.image[0]
-            });
+            try {
+                const { publicURL, errorMessage } = 
+                    await uploadFile({
+                        imageFile : values.image[0]
+                });
 
-            if(errorMessage)
-                //TODO Toast
-                console.log(errorMessage)
-            
-            const newProduct = {
-                name : values.name,
-                description : values.description,
-                price : values.price,
-                stock : values.stock,
-                imageURL : publicURL
+                if(errorMessage)
+                    //TODO Toast
+                    console.log(errorMessage)
+                
+                const newProduct = {
+                    name : values.name,
+                    description : values.description,
+                    price : values.price,
+                    stock : values.stock,
+                    imageURL : publicURL
+                }
+
+                await addProductServerAction({
+                    ...newProduct, 
+                    imageURL : publicURL,
+                })
+
+                form.reset();
+
+                setIsFileDialogOpen(false);
+
+                toast({
+                    variant: "default",
+                    title: "Product Added",
+                    description: "Your new Product has been added!",
+                });
             }
-            console.log(newProduct);
+            catch {
+                toast({
+                    variant: "destructive",
+                    title: "Failed",
+                    description: "Your new Product was not able to be added!",
+                });
 
-            await addProductServerAction({
-                ...newProduct, 
-                imageURL : publicURL,
-            })
+            }
     };
 
     return (
-        <Dialog open={props.isOpen} onOpenChange={props.onOpenChange}>
+        <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
+            <DialogTrigger asChild>
+                {/* <Button variant="outline" size="icon">
+                    <FilePlus />
+                </Button> */}
+                <Button>
+                    <Plus className="mr-2 h-4 w-4" /> Add Product
+                </Button>
+            </DialogTrigger>
+            
+            <DialogClose onClick={() => setIsFileDialogOpen(false)}></DialogClose>
+            
             <DialogContent className="max-w-2xl h-aut overflow-auto">
                 <DialogHeader>
                     <DialogTitle>Add New Product</DialogTitle>
@@ -346,7 +386,7 @@ function AddProductDialog(props : AddProductDialogProps) {
                             </div> */}
                         </div>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => props.onOpenChange(false)}>
+                            <Button variant="outline" onClick={() => setIsFileDialogOpen(false)}>
                                 Cancel
                             </Button>
                             <Button 

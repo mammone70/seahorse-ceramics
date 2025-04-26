@@ -1,58 +1,53 @@
 "use client"
-import Link from "next/link"
-import Image from "next/image";
 
-import { ShoppingCart } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useCart } from "@/components/cart/cart-provider";
+import Logo from "@/components/logo";
+import NavMenu from "@/components/nav/nav-menu";
+import CartButton from "./cart/cart-button";
+import MobileNavMenu from "@/components/nav/mobile-nav-menu";
+import { TMenuItem } from "@/components/nav/menu-item-type";
+
+const menuItems : TMenuItem[] = [
+    {
+        text: "Home",
+        path: "/",
+    },
+    {
+        text: "Collections",
+        path: "/collections",
+    },
+    {
+        text: "Products",
+        path: "/products",
+    },
+    {
+        text: "About",
+        path: "/about",
+    },
+    {
+        text: "Contact",
+        path: "/contact",
+    }   
+]
 
 export default function Header() {
-  const { setIsOpen, totalItems } = useCart()
 
   return (
     <header className="border-b-2 shadow-sm">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="font-bold text-xl">
-            <Image 
-                src="/img/seahorse-logo.png" 
-                alt="Seahorse Ceramics"
-                width={60}
-                height={50}
-                className="rounded-full"/>
-        </Link>
-        <nav>
-          <ul className="flex space-x-4">
-            <li>
-              <Link href="/" className="text-gray-600 hover:text-gray-900">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/products" className="text-gray-600 hover:text-gray-900">
-                Products
-              </Link>
-            </li>
-            <li>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="text-gray-600 hover:text-gray-900">
-                Contact
-              </Link>
-            </li>
-          </ul>
-        </nav>
-        <Button variant="outline" size="icon" onClick={() => setIsOpen(true)} className="relative">
-          <ShoppingCart className="h-4 w-4" />
-          {totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              {totalItems}
-            </span>
-          )}
-          <span className="sr-only">Cart</span>
-        </Button>
+      
+      {/* Large Screen */}
+      <div className="hidden md:container mx-auto px-4 py-4 md:flex justify-between items-center">
+        <Logo variant="horizontal" size="large"/>
+        <NavMenu menuItems={menuItems}/>
+        <CartButton/>
+      </div>
+
+      {/* Mobile  */}
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center lg:hidden sm:flex">
+        <Logo variant="icon-only" size="large"/>
+        <div>
+          <MobileNavMenu menuItems={menuItems}/>
+          <CartButton/>
+        </div>
       </div>
     </header>
   )

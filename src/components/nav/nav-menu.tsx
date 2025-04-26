@@ -10,28 +10,22 @@ import {
 import Link from "next/link"
 
 import { usePathname } from "next/navigation";
+import { TMenuItem } from "@/components/nav/menu-item-type";
 
-const menuItems : {text: string, path: string}[] = [
-    {
-        text: "About",
-        path: "/about",
-    },
-    {
-        text: "Collections",
-        path: "/collections",
-    },
-]
+type NavMenuProps = {
+  menuItems : TMenuItem[]
+}
 
-export default function NavMenu() {
+export default function NavMenu(props : NavMenuProps) {
     const pathName = usePathname();
     return (
-        <NavigationMenu >
+        <NavigationMenu>
             <NavigationMenuList>
-                {menuItems.map((menuItem, index) => (
+                {props.menuItems.map((menuItem, index) => (
                     <NavigationMenuItem key={index}>
                         <Link href={menuItem.path} legacyBehavior passHref>
                             <NavigationMenuLink 
-                                className={`font-bold text-xl p-1 ${pathName == menuItem.path ? "border rounded-md border-primary bg-muted/80 pointer-events-none" : ""}`}>
+                                className={`font-bold text-xl px-2 py-1 ${pathName == menuItem.path ? "border rounded-lg border-primary bg-white pointer-events-none" : ""}`}>
                                 {menuItem.text}
                             </NavigationMenuLink>
                         </Link>
