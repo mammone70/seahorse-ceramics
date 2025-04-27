@@ -108,8 +108,6 @@ function ProductsSection({initialProducts} : {initialProducts : TProduct[]}) {
           </CardContent>
         </Card>
       </main> 
-
-      {/* Add Product Dialog */}
       
       {/* Edit Product Dialog */}
       {/* <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
