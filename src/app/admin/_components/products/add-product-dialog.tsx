@@ -31,7 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { uploadFile } from "@/lib/file-storage"
 import { addProductServerAction } from "@/actions/products"
 import { useToast } from "@/hooks/use-toast"
-import { FilePlus, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 import { useState } from "react"
 
 // Product categories
@@ -148,7 +148,7 @@ function AddProductDialog() {
                 {/* <Button variant="outline" size="icon">
                     <FilePlus />
                 </Button> */}
-                <Button>
+                <Button size="sm">
                     <Plus className="mr-2 h-4 w-4" /> Add Product
                 </Button>
             </DialogTrigger>

@@ -13,8 +13,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Search, Trash2 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TProduct } from "@/dao/products"
-import ProductsHeader from "./products-header"
 import AdminProductsTable from "./products-table"
+import AddProductDialog from "./add-product-dialog"
 // import { useQueryClient } from "@tanstack/react-query";
 // import { useState } from "react"
 
@@ -36,7 +36,7 @@ function ProductsSection({initialProducts} : {initialProducts : TProduct[]}) {
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="container mx-auto px-4 py-8">
-        <ProductsHeader/>
+        {/* <ProductsHeader/> */}
 
         <Card className="mb-6">
           <CardHeader>
@@ -54,6 +54,7 @@ function ProductsSection({initialProducts} : {initialProducts : TProduct[]}) {
                   <TabsTrigger value="featured">Featured ({products.filter((p) => p.featured).length})</TabsTrigger> */}
                 </TabsList>
                 <div className="flex items-center gap-2">
+                  <AddProductDialog/>
                   {/* {selectedProducts.length > 0 && ( */}
                     <Button variant="outline" size="sm" className="text-destructive">
                       <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
