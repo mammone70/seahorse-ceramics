@@ -25,7 +25,8 @@ export default function NavMenu(props : NavMenuProps) {
                     <NavigationMenuItem key={index}>
                         <Link href={menuItem.path} legacyBehavior passHref>
                             <NavigationMenuLink 
-                                className={`font-bold text-xl px-2 py-1 ${pathName == menuItem.path ? "border rounded-lg border-primary bg-white pointer-events-none" : ""}`}>
+                                // className={`font-bold text-xl px-2 py-1 ${pathName == menuItem.path ? "border rounded-lg border-primary bg-white pointer-events-none" : ""}`}>
+                                className={`text-gray-600 hover:text-gray-900 text-xl px-2 py-1 ${pathName == menuItem.path ? "text-gray-900 pointer-events-none" : ""}`}>
                                 {menuItem.text}
                             </NavigationMenuLink>
                         </Link>
