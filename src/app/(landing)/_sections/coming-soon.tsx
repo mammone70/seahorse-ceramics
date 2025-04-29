@@ -2,10 +2,8 @@
 
 import { motion } from 'framer-motion'
 
-import Link from 'next/link'
-import Image from "next/image";
-
 import React from 'react'
+import Logo from '@/components/logo';
 
 export default function ComingSoon() {
     const containerVariants = {
@@ -31,7 +29,7 @@ export default function ComingSoon() {
       return(
           <div className="min-h-screen bg-gradient-to-r from-sky-300 to-cyan-100 flex flex-col">
             <header className="border-b-2 shadow-sm">
-                <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                {/* <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                     <Link href="/" className="font-bold text-xl">
                         <Image 
                             src="/img/seahorse-logo.png" 
@@ -40,6 +38,15 @@ export default function ComingSoon() {
                             height={50}
                             className="rounded-full"/>
                     </Link>
+                </div> */}
+                {/* Large Screen */}
+                <div className="hidden md:container mx-auto px-4 py-4 md:flex justify-between items-center">
+                  <Logo variant="horizontal" size="large"/>
+                </div>
+          
+                {/* Mobile  */}
+                <div className="container mx-auto px-4 py-4 flex justify-between items-center lg:hidden sm:flex">
+                  <Logo variant="horizontal" size="large"/>
                 </div>
             </header>
             <motion.div

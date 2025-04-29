@@ -43,7 +43,7 @@ export default function Header() {
 
       {/* Mobile  */}
       <div className="container mx-auto px-4 py-4 flex justify-between items-center lg:hidden sm:flex">
-        <Logo variant="icon-only" size="large"/>
+        <Logo variant="horizontal" size="medium"/>
         <div>
           <MobileNavMenu menuItems={menuItems}/>
           <CartButton/>
