@@ -42,7 +42,7 @@ export default function Header() {
       </div>
 
       {/* Mobile  */}
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center lg:hidden sm:flex">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center md:hidden sm:flex">
         <Logo variant="horizontal" size="medium"/>
         <div>
           <MobileNavMenu menuItems={menuItems}/>
