@@ -145,9 +145,6 @@ function AddProductDialog() {
     return (
         <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
             <DialogTrigger asChild>
-                {/* <Button variant="outline" size="icon">
-                    <FilePlus />
-                </Button> */}
                 <Button size="sm">
                     <Plus className="mr-2 h-4 w-4" /> Add Product
                 </Button>

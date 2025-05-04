@@ -1,10 +1,15 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+
+  //TODO change to regex pattern match so wildcards can be used
 const protectedRoutes = 
   [
     '/admin/dashboard',
     '/admin/products',
+    '/admin/categories',
+    '/admin/orders',
+    '/admin/customers',
   ]
 
 export async function updateSession(request: NextRequest) {
