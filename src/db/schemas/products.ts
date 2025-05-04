@@ -1,8 +1,9 @@
 import { randomUUID } from "crypto";
 import { relations } from "drizzle-orm";
-import { integer, numeric, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, integer, numeric, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { images } from "./images";
 import { cartItems } from "./cartItems";
+import { categories } from "./categories";
 
 export const products = pgTable('products', {
     id: text('id')
@@ -19,6 +20,7 @@ export const products = pgTable('products', {
         .default('0.00')
         .notNull(),
     stock : integer().default(0).notNull(),
+    active : boolean().default(true).notNull(),
     imageURL : text('image_url'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')
@@ -39,3 +41,10 @@ export const productCartRelations = relations(products,
         cartItems: many(cartItems),
     })
 );
+
+//products to categories many-to-many relationship
+export const productToCategories = relations(products,
+    ({ many }) => ({
+        categories: many(categories),
+    })
+)

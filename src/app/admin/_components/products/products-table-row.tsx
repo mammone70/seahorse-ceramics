@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { TProduct } from "@/dao/products"
-import { Checkbox } from "@radix-ui/react-checkbox"
+import { Checkbox } from '@/components/ui/checkbox'
 import { MoreHorizontal } from "lucide-react"
 
 import Image from "next/image"
@@ -15,7 +15,7 @@ export type TProductsTableRowProps = {
 export default function ProductsTableRow(props : TProductsTableRowProps) {
     return (
         <TableRow key={props.product.id}>
-            <TableCell>
+            <TableCell className="w-[50px]">
                 <Checkbox
                 // checked={selectedProducts.includes(product.id)}
                 // onCheckedChange={() => toggleSelectProduct(product.id)}
