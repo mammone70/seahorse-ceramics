@@ -23,16 +23,15 @@ import {
   } from "@/components/ui/form"
 
 import { Input } from "@/components/ui/input"
-
 import { useForm } from "react-hook-form"
-
-import * as z from "zod";
+import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { uploadFile } from "@/lib/file-storage"
 import { addProductServerAction } from "@/actions/products"
 import { useToast } from "@/hooks/use-toast"
 import { Plus } from "lucide-react"
 import { useState } from "react"
+import { MultiImageUpload } from "./multi-image-upload"
 
 // Product categories
 // const categories = ["All Categories", "Vases", "Bowls", "Mugs", "Plates", "Planters", "Sets", "Home Decor", "Bathroom"]
@@ -42,105 +41,88 @@ import { useState } from "react"
 //     onOpenChange : (open : boolean) => void
 // }
 
-
 const addProductFormSchema = z.object({
-        name : z.string(({
-            message : "Product Name is required"
-        })),
-        description : z.string(({
-            message : "Product Description is required"
-        })),
-        price : z
-            // .coerce
-            .string(({
-                message : "Price is required"
-            }))
-            .refine( n => {
-                const numberParts = n.toString().split( '.' );
-                return (numberParts.length > 1) 
-                    ? 
-                        numberParts[1].length <= 2
-                    :
-                        true
-            }, { message: 'Max precision is 2 decimal places' } ),
-        stock : z
-            .coerce
-            .number(({
-                message : "Quantity is required"
-            }))
-            .nonnegative()
-            .multipleOf(1)
-            .safe({
-                message : "Quantity must be a positive, whole number",
-            }
-        ),
-        image : z
-            .custom<FileList>((val) => val instanceof FileList, "Required")
-            .refine((files) => files.length > 0, `Required`),
-    });
+    name: z.string({
+        message: "Product Name is required"
+    }),
+    description: z.string({
+        message: "Product Description is required"
+    }),
+    price: z.string({
+        message: "Price is required"
+    }).refine(n => {
+        const numberParts = n.toString().split('.')
+        return (numberParts.length > 1)
+            ? numberParts[1].length <= 2
+            : true
+    }, { message: 'Max precision is 2 decimal places' }),
+    stock: z.coerce.number({
+        message: "Quantity is required"
+    }).nonnegative().multipleOf(1).safe({
+        message: "Quantity must be a positive, whole number",
+    }),
+    images: z.array(z.instanceof(File)).min(1, "At least one image is required")
+})
 
 function AddProductDialog() {
-    const { toast } = useToast();
-    
-    const [isFileDialogOpen, setIsFileDialogOpen] = useState(false);
+    const { toast } = useToast()
+    const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
+    const [selectedImages, setSelectedImages] = useState<File[]>([])
     
     const form = useForm<z.infer<typeof addProductFormSchema>>({
         resolver: zodResolver(addProductFormSchema),
-        defaultValues : {
-            name : "",
-            price : "",
-            image : undefined,
-            description : "",
-            stock : 0
+        defaultValues: {
+            name: "",
+            price: "",
+            description: "",
+            stock: 0,
+            images: []
         }
-    });
+    })
 
-    const imageFileRef = form.register("image");
-
-    const onSubmit = 
-        async (values: z.infer<typeof addProductFormSchema>) => {
-            try {
-                const { publicURL, errorMessage } = 
-                    await uploadFile({
-                        imageFile : values.image[0]
-                });
-
-                if(errorMessage)
-                    //TODO Toast
-                    console.log(errorMessage)
-                
-                const newProduct = {
-                    name : values.name,
-                    description : values.description,
-                    price : values.price,
-                    stock : values.stock,
-                    imageURL : publicURL
-                }
-
-                await addProductServerAction({
-                    ...newProduct, 
-                    imageURL : publicURL,
-                })
-
-                form.reset();
-
-                setIsFileDialogOpen(false);
-
-                toast({
-                    variant: "default",
-                    title: "Product Added",
-                    description: "Your new Product has been added!",
-                });
+    const onSubmit = async (values: z.infer<typeof addProductFormSchema>) => {
+        try {
+            // Upload all images
+            const uploadPromises = values.images.map(image => uploadFile({ imageFile: image }))
+            const uploadResults = await Promise.all(uploadPromises)
+            
+            // Check for any upload errors
+            const errors = uploadResults.filter(result => result.errorMessage)
+            if (errors.length > 0) {
+                throw new Error("Some images failed to upload")
             }
-            catch {
-                toast({
-                    variant: "destructive",
-                    title: "Failed",
-                    description: "Your new Product was not able to be added!",
-                });
 
+            // Get all successful upload URLs
+            const imageURLs = uploadResults.map(result => result.publicURL)
+
+            const newProduct = {
+                name: values.name,
+                description: values.description,
+                price: values.price,
+                stock: values.stock,
+                imageURL: imageURLs[0], // Set first image as main image
+                images: imageURLs // Store all image URLs
             }
-    };
+
+            await addProductServerAction(newProduct)
+
+            form.reset()
+            setSelectedImages([])
+            setIsFileDialogOpen(false)
+
+            toast({
+                variant: "default",
+                title: "Product Added",
+                description: "Your new product has been added!",
+            })
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Failed",
+                description: "Your new product was not able to be added!",
+            })
+        }
+    }
 
     return (
         <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
@@ -152,235 +134,87 @@ function AddProductDialog() {
             
             <DialogClose onClick={() => setIsFileDialogOpen(false)}></DialogClose>
             
-            <DialogContent className="max-w-2xl h-aut overflow-auto">
+            <DialogContent className="max-w-2xl h-auto overflow-auto">
                 <DialogHeader>
                     <DialogTitle>Add New Product</DialogTitle>
                     <DialogDescription>Fill in the details to add a new product to your inventory.</DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form
-                          onSubmit={form.handleSubmit(onSubmit)}
-                    >
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="name"
-                                        render={({ field  }) => (
-                                            <FormItem>
-                                                <FormLabel>Product Name</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="Product Name" {...field} />
-                                                </FormControl>
-                                                <FormDescription>
-                                                    {/* This is your public display name. */}
-                                                </FormDescription>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )}
-                                    />
-                                    {/* <Label htmlFor="name">Product Name</Label>
-                                    <Input
-                                        {...form.register("name")}
-                                        id="name"
-                                        // value={newProduct.name}
-                                        // onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                                        placeholder="Product Name"
-                                    /> */}
-                                </div>
-                                <div className="space-y-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="price"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Price ($)</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="Product Price" {...field} />
-                                                </FormControl>
-                                                <FormDescription>
-                                                    {/* Price of the Product. */}
-                                                </FormDescription>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="stock"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Quantity</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="Quantity in stock" {...field} />
-                                                </FormControl>
-                                                <FormDescription>
-                                                    {/* Price of the Product. */}
-                                                </FormDescription>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="description"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Description</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="Product Description" {...field}/>
-                                                </FormControl>
-                                                <FormDescription>
-                                                    {/* Price of the Product. */}
-                                                </FormDescription>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                            </div>    
-                            <div className="space-y-2">
                                 <FormField
                                     control={form.control}
-                                    name="image"
-                                    render={({  }) => (
+                                    name="name"
+                                    render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Image File</FormLabel>
+                                            <FormLabel>Product Name</FormLabel>
                                             <FormControl>
-                                                <Input 
-                                                    type="file" 
-                                                    placeholder="Select Product Image"
-                                                    {...imageFileRef}
-                                                />
+                                                <Input placeholder="Product Name" {...field} />
                                             </FormControl>
-                                            <FormDescription>
-                                        
-                                            </FormDescription>
                                             <FormMessage/>
                                         </FormItem>
                                     )}
                                 />
-                            </div>
-                                {/* <div className="space-y-2">
-                                    <Label htmlFor="sku">SKU</Label>
-                                    <Input
-                                    id="sku"
-                                    // value={newProduct.sku}
-                                    // onChange={(e) => setNewProduct({ ...newProduct, sku: e.target.value })}
-                                    placeholder="VASE-001"
-                                    />
-                                </div> */}
-                                {/* <div className="space-y-2">
-                                    <Label htmlFor="price">Price ($)</Label>
-                                    <Input
-                                        {...form.register("price")}
-                                        id="price"
-                                        type="number"
-                                        // value={newProduct.price}
-                                        // onChange={(e) => setNewProduct({ ...newProduct, price: Number.parseFloat(e.target.value) })}
-                                        placeholder="39.99"
-                                    />
-                                </div> */}
-                                {/* <div className="space-y-2">
-                                    <Label htmlFor="stock">Stock</Label>
-                                    <Input
-                                        {...form.register("quantity")}
-                                        id="stock"
-                                        type="number"
-                                        // value={newProduct.stock}
-                                        // onChange={(e) => setNewProduct({ ...newProduct, stock: Number.parseInt(e.target.value) })}
-                                        placeholder="10"
-                                    />
-                                </div> */}
-                                {/* <div className="space-y-2">
-                                    <Label htmlFor="category">Category</Label>
-                                    <Select
-                                        // value={newProduct.category}
-                                        // onValueChange={(value) => setNewProduct({ ...newProduct, category: value })}
-                                    >
-                                    <SelectTrigger id="category">
-                                        <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categories
-                                        .filter((c) => c !== "All Categories")
-                                        .map((category) => (
-                                            <SelectItem key={category} value={category}>
-                                            {category}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                    </Select>
-                                </div> */}
-                                {/* <div className="space-y-2">
-                                    <Label htmlFor="status">Status</Label>
-                                    <Select
-                                    // value={newProduct.status}
-                                    // onValueChange={(value) => setNewProduct({ ...newProduct, status: value })}
-                                    >
-                                    <SelectTrigger id="status">
-                                        <SelectValue placeholder="Select status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Active">Active</SelectItem>
-                                        <SelectItem value="Draft">Draft</SelectItem>
-                                        <SelectItem value="Archived">Archived</SelectItem>
-                                    </SelectContent>
-                                    </Select>
-                                </div> */}
-                                {/* <div className="space-y-2">
-                                    <Label htmlFor="dimensions">Dimensions</Label>
-                                    <Input
-                                    id="dimensions"
-                                    // value={newProduct.dimensions}
-                                    // onChange={(e) => setNewProduct({ ...newProduct, dimensions: e.target.value })}
-                                    placeholder="10&quot; x 5&quot; x 5&quot;"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="weight">Weight</Label>
-                                    <Input
-                                    id="weight"
-                                    // value={newProduct.weight}
-                                    // onChange={(e) => setNewProduct({ ...newProduct, weight: e.target.value })}
-                                    placeholder="2 lbs"
-                                    />
-                                </div> */}
-                                {/* <div className="space-y-2 md:col-span-2">
-                                    <Label htmlFor="description">Description</Label>
-                                    <Textarea
-                                        {...form.register("description")}
-                                        id="description"
-                                        // value={newProduct.description}
-                                        // onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                                        placeholder="A beautiful handcrafted ceramic vase..."
-                                        rows={3}
-                                    />
-                                </div> */}
-                                {/* <div className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id="featured"
-                                        // checked={newProduct.featured}
-                                        // onCheckedChange={(checked) => setNewProduct({ ...newProduct, featured: checked as boolean })}
-                                    />
-                                    <Label htmlFor="featured">Featured Product</Label>
-                                </div> */}
-                            {/* <div className="space-y-2">
-                                <Label>Product Image</Label>
-                                <div className="border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center">
-                                    <ImagePlus className="h-8 w-8 text-muted-foreground mb-2" />
-                                    <p className="text-sm text-muted-foreground mb-1">Drag and drop an image here, or click to browse</p>
-                                    <p className="text-xs text-muted-foreground">Recommended size: 800x800px. Max file size: 5MB</p>
-                                    <Button variant="outline" size="sm" className="mt-4">
-                                        Upload Image
-                                    </Button>
-                                </div>
-                            </div> */}
+                                <FormField
+                                    control={form.control}
+                                    name="price"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Price ($)</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Product Price" {...field} />
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="stock"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Quantity</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="Quantity in stock" {...field} />
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Description</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Product Description" {...field}/>
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>    
+                            <FormField
+                                control={form.control}
+                                name="images"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Product Images</FormLabel>
+                                        <FormControl>
+                                            <MultiImageUpload
+                                                onImagesChange={(files) => {
+                                                    field.onChange(files)
+                                                    setSelectedImages(files)
+                                                }}
+                                                maxFiles={5}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
                         </div>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setIsFileDialogOpen(false)}>
@@ -397,7 +231,7 @@ function AddProductDialog() {
                 </Form>
             </DialogContent>
         </Dialog>
-  )
+    )
 }
 
 export default AddProductDialog

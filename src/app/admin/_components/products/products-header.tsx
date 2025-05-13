@@ -1,26 +1,30 @@
 "use client"
 
-import AddProductDialog from './add-product-dialog'
+import { Button } from "@/components/ui/button"
+import { TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Trash2 } from "lucide-react"
+import AddProductDialog from "./add-product-dialog"
 
-function ProductsHeader() {
-    // const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-    
-    // const handleOpenChange = (open : boolean) => {
-    //     setIsAddDialogOpen(open);
-    // }
-
-    return (
-        <div className="flex justify-between mb-6">
-            <h1 className="text-3xl font-bold">Products</h1>
-            {/* <AddProductDialogButton onClick={handleOpenChange}/> */}
-            <div>
-                <AddProductDialog 
-                    // isOpen={isAddDialogOpen}
-                    // onOpenChange={handleOpenChange}    
-                />
-            </div>
-        </div>
-  )
+interface ProductsHeaderProps {
+  totalProducts: number
+  onDeleteSelected?: () => void
+  hasSelectedProducts?: boolean
 }
 
-export default ProductsHeader
+export function ProductsHeader({ totalProducts, onDeleteSelected, hasSelectedProducts }: ProductsHeaderProps) {
+  return (
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+      <TabsList>
+        <TabsTrigger value="all">All Products ({totalProducts})</TabsTrigger>
+      </TabsList>
+      <div className="flex items-center gap-2">
+        <AddProductDialog />
+        {hasSelectedProducts && (
+          <Button variant="outline" size="sm" className="text-destructive" onClick={onDeleteSelected}>
+            <Trash2 className="mr-2 h-4 w-4" /> Delete Selected
+          </Button>
+        )}
+      </div>
+    </div>
+  )
+}

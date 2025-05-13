@@ -10,7 +10,7 @@ export function CartSidebar() {
   const { items, isOpen, setIsOpen, removeItem, updateQuantity, totalItems, totalPrice } = useCart()
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet  open={isOpen} onOpenChange={setIsOpen}>
       <SheetContent className="w-full sm:max-w-md flex flex-col">
         <SheetHeader>
           <SheetTitle>Your Cart ({totalItems})</SheetTitle>
