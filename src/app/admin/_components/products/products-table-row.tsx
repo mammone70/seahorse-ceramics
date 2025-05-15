@@ -45,7 +45,7 @@ export default function ProductsTableRow({ product, onEdit, onDelete, isSelected
         <Badge>Active</Badge>
       </TableCell>
       <TableCell className="text-right">
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
               <MoreHorizontal className="h-4 w-4" />

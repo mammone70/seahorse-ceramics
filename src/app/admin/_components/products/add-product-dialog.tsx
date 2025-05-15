@@ -15,7 +15,6 @@ import {
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -66,7 +65,7 @@ const addProductFormSchema = z.object({
 
 function AddProductDialog() {
     const { toast } = useToast()
-    const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
+    const [isProductDialogOpen, setIsProductDialogOpen] = useState(false)
     const [selectedImages, setSelectedImages] = useState<File[]>([])
     
     const form = useForm<z.infer<typeof addProductFormSchema>>({
@@ -108,7 +107,7 @@ function AddProductDialog() {
 
             form.reset()
             setSelectedImages([])
-            setIsFileDialogOpen(false)
+            setIsProductDialogOpen(false)
 
             toast({
                 variant: "default",
@@ -125,14 +124,14 @@ function AddProductDialog() {
     }
 
     return (
-        <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
+        <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
             <DialogTrigger asChild>
                 <Button size="sm">
                     <Plus className="mr-2 h-4 w-4" /> Add Product
                 </Button>
             </DialogTrigger>
             
-            <DialogClose onClick={() => setIsFileDialogOpen(false)}></DialogClose>
+            <DialogClose onClick={() => setIsProductDialogOpen(false)}></DialogClose>
             
             <DialogContent className="max-w-2xl h-auto overflow-auto">
                 <DialogHeader>
@@ -217,7 +216,7 @@ function AddProductDialog() {
                             />
                         </div>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsFileDialogOpen(false)}>
+                            <Button variant="outline" onClick={() => setIsProductDialogOpen(false)}>
                                 Cancel
                             </Button>
                             <Button 

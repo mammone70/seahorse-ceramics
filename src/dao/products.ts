@@ -10,6 +10,7 @@ export type TProduct = {
     price : string,
     stock : number,
     imageURL : string | null,
+    images : (string | null)[]
 }
 
 export type TInsertProduct = Omit<TProduct, "id">;

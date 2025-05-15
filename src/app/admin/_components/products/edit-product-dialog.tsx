@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -10,13 +11,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { TProduct } from "@/dao/products"
 import { useToast } from "@/hooks/use-toast"
 import { uploadFile } from "@/lib/file-storage"
 import { X } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { MultiImageUpload } from "./multi-image-upload"
+import Image from "next/image"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 
 interface EditProductDialogProps {
   isOpen: boolean
@@ -26,28 +38,71 @@ interface EditProductDialogProps {
 }
 
 // Extended product type to include images array
-interface ExtendedProduct extends TProduct {
-  images?: string[]
-}
+// interface ExtendedProduct extends TProduct {
+//   images?: string[]
+// }
+
+const editProductFormSchema = z.object({
+  name: z.string({
+    message: "Product Name is required"
+  }),
+  description: z.string({
+    message: "Product Description is required"
+  }),
+  price: z.string({
+    message: "Price is required"
+  }).refine(n => {
+    const numberParts = n.toString().split('.')
+    return (numberParts.length > 1)
+      ? numberParts[1].length <= 2
+      : true
+  }, { message: 'Max precision is 2 decimal places' }),
+  stock: z.coerce.number({
+    message: "Quantity is required"
+  }).nonnegative().multipleOf(1).safe({
+    message: "Quantity must be a positive, whole number",
+  }),
+  images: z.array(z.instanceof(File)).optional()
+})
 
 export function EditProductDialog({ isOpen, onOpenChange, product, onSave }: EditProductDialogProps) {
   const { toast } = useToast()
   const [selectedImages, setSelectedImages] = useState<File[]>([])
-  const [editedProduct, setEditedProduct] = useState<ExtendedProduct | null>(null)
 
-  if (!product) return null
+  const form = useForm<z.infer<typeof editProductFormSchema>>({
+    resolver: zodResolver(editProductFormSchema),
+    defaultValues: {
+      name: "",
+      price: "",
+      description: "",
+      stock: 0,
+      images: []
+    }
+  })
 
-  // Initialize editedProduct when product changes
-  if (!editedProduct) {
-    setEditedProduct({
-      ...product,
-      images: product.imageURL ? [product.imageURL] : []
-    })
-  }
+  // Reset form when dialog opens/closes or product changes
+  useEffect(() => {
+    if (isOpen && product) {
+      form.reset({
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        stock: product.stock,
+        images: []
+      })
+    } else {
+      form.reset({
+        name: "",
+        price: "",
+        description: "",
+        stock: 0,
+        images: []
+      })
+      setSelectedImages([])
+    }
+  }, [isOpen, product, form])
 
-  const handleSave = async () => {
-    if (!editedProduct) return
-
+  const onSubmit = async (values: z.infer<typeof editProductFormSchema>) => {
     try {
       let imageURLs: string[] = []
       
@@ -68,18 +123,20 @@ export function EditProductDialog({ isOpen, onOpenChange, product, onSave }: Edi
 
       // Combine existing and new image URLs
       const allImageURLs = [
-        ...(editedProduct.images || []),
+        ...(product?.images || []),
         ...imageURLs
       ]
 
       const updatedProduct: TProduct = {
-        ...editedProduct,
-        imageURL: allImageURLs[0] || editedProduct.imageURL
+        ...product!,
+        name: values.name,
+        description: values.description,
+        price: values.price,
+        stock: values.stock,
+        imageURL: allImageURLs[0] || product?.imageURL || ""
       }
-
       onSave(updatedProduct)
       setSelectedImages([])
-      setEditedProduct(null)
       onOpenChange(false)
 
       toast({
@@ -96,99 +153,142 @@ export function EditProductDialog({ isOpen, onOpenChange, product, onSave }: Edi
     }
   }
 
+  if (!product) return null
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogClose onClick={() => onOpenChange(false)}></DialogClose>
       <DialogContent className="max-w-2xl h-full overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Product</DialogTitle>
           <DialogDescription>Update the details of your product.</DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-name">Product Name</Label>
-              <Input
-                id="edit-name"
-                value={editedProduct?.name}
-                onChange={(e) => setEditedProduct(prev => prev ? { ...prev, name: e.target.value } : null)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-price">Price ($)</Label>
-              <Input
-                id="edit-price"
-                type="number"
-                value={editedProduct?.price}
-                onChange={(e) => setEditedProduct(prev => prev ? { ...prev, price: e.target.value } : null)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-stock">Stock</Label>
-              <Input
-                id="edit-stock"
-                type="number"
-                value={editedProduct?.stock}
-                onChange={(e) => setEditedProduct(prev => prev ? { ...prev, stock: Number(e.target.value) } : null)}
-              />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="edit-description">Description</Label>
-              <Input
-                id="edit-description"
-                value={editedProduct?.description}
-                onChange={(e) => setEditedProduct(prev => prev ? { ...prev, description: e.target.value } : null)}
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Product Images</Label>
-            <MultiImageUpload
-              onImagesChange={setSelectedImages}
-              maxFiles={5}
-            />
-            {editedProduct?.images && editedProduct.images.length > 0 && (
-              <div className="mt-4">
-                <Label>Current Images</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
-                  {editedProduct.images.map((imageURL, index) => (
-                    <div key={imageURL} className="relative group">
-                      <img
-                        src={imageURL}
-                        alt={`Product image ${index + 1}`}
-                        className="rounded-md object-cover w-full aspect-square"
-                      />
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => {
-                          setEditedProduct(prev => {
-                            if (!prev) return null
-                            const newImages = [...(prev.images || [])]
-                            newImages.splice(index, 1)
-                            return {
-                              ...prev,
-                              images: newImages,
-                              imageURL: newImages[0] || prev.imageURL
-                            }
-                          })
-                        }}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Product Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price ($)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Product Price" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="stock"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Quantity</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="Quantity in stock" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Product Description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            )}
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>Save Changes</Button>
-        </DialogFooter>
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Product Images</FormLabel>
+                    <FormControl>
+                      <MultiImageUpload
+                        onImagesChange={(files) => {
+                          field.onChange(files)
+                          setSelectedImages(files)
+                        }}
+                        maxFiles={5}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {product.images && product.images.length > 0 && (
+                <div className="mt-4">
+                  <FormLabel>Current Images</FormLabel>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
+                    {product.images.map((imageURL, index) => (
+                      <div key={imageURL} className="relative group">
+                        <Image
+                          src={imageURL || ""}
+                          alt={`Product image ${index + 1}`}
+                          className="rounded-md object-cover w-full aspect-square"
+                          width={100}
+                          height={100}
+                        />
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => {
+                            const newImages = [...product.images!]
+                            newImages.splice(index, 1)
+                            onSave({
+                              ...product,
+                              images: newImages,
+                              imageURL: newImages[0] || product.imageURL
+                            })
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button 
+                type="submit"
+                disabled={form.formState.isSubmitting}
+              >
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   )
