@@ -41,8 +41,8 @@ export default function Logo({ variant = "horizontal", size = "medium", classNam
       {variant !== "icon-only" && variant === "vertical" ? (
         <motion.div
           className={`flex flex-col items-center ${currentSize.spacing} ${className}`}
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          // whileHover={{ scale: 1.05 }}
+          // transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
           <div className="relative">
             <Image
@@ -58,8 +58,8 @@ export default function Logo({ variant = "horizontal", size = "medium", classNam
       ) : variant === "icon-only" ? (
         <motion.div
           className={`relative ${className}`}
-          whileHover={{ scale: 1.1, rotate: 5 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          // whileHover={{ scale: 1.1, rotate: 5 }}
+          // transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
           <Image
             src="/img/seahorse-logo.png"
@@ -72,8 +72,8 @@ export default function Logo({ variant = "horizontal", size = "medium", classNam
       ) : (
         <motion.div
           className={`flex items-center ${currentSize.spacing} ${className}`}
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            // whileHover={{ scale: 1.05 }}
+            // transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
           <div className="relative">
             <Image
