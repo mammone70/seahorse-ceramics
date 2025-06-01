@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { TProduct } from '@/dao/products'
 import { Dispatch, SetStateAction } from 'react'
 import ProductsTableRow from './products-table-row'
+import { useProducts } from '@/hooks/use-products'
 
 interface AdminProductsTableProps {
   products: TProduct[]
@@ -15,6 +16,8 @@ interface AdminProductsTableProps {
 }
 
 function AdminProductsTable({ products, onEdit, onDelete, selectedProducts, onSelectionChange }: AdminProductsTableProps) {
+  const { isPending } = useProducts();
+  
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       onSelectionChange(products.map(p => p.id))
@@ -44,6 +47,17 @@ function AdminProductsTable({ products, onEdit, onDelete, selectedProducts, onSe
         </TableRow>
       </TableHeader>
       <TableBody>
+        {/* Optimistic mutation product */}
+        {
+          isPending && (
+            <TableRow>
+              <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                Loading...
+              </TableCell>
+            </TableRow>
+          )
+        }
+
         {products.length === 0 ? (
           <TableRow>
             <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">

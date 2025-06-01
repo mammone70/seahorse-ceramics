@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -39,13 +40,15 @@ export function DeleteProductDialog({ isOpen, onOpenChange, product, onConfirm }
           />
           <div>
             <h3 className="font-medium">{product.name}</h3>
-            <p className="text-sm text-muted-foreground">SKU: {product.sku || "N/A"}</p>
+            <p className="text-sm text-muted-foreground">SKU: {product.id || "N/A"}</p>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
+          <DialogClose asChild>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+          </DialogClose>
           <Button variant="destructive" onClick={onConfirm}>
             Delete Product
           </Button>

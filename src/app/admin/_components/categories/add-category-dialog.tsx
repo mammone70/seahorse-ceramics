@@ -76,8 +76,8 @@ export function AddCategoryDialog() {
   }
 
   // Watch the name field to auto-generate slug
-  const watchedName = form.watch("name")
-  const watchedSlug = form.watch("slug")
+    // const watchedName = form.watch("name")
+    // const watchedSlug = form.watch("slug")
 
   // Auto-generate slug when name changes and slug hasn't been manually edited
   useEffect(() => {

@@ -25,8 +25,9 @@ export const images = pgTable('images',
 //images to products, many to one
 export const imageRelations = relations(images, 
     ({ one }) => ({
-        products: one(products, {
+        product: one(products, {
             fields: [images.productId],
             references: [products.id],
         }),
-}));
+    })
+);

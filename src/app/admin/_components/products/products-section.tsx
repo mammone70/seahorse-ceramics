@@ -9,19 +9,27 @@ import { ProductsToolbar } from "./products-toolbar"
 import { EditProductDialog } from "./edit-product-dialog"
 import { DeleteProductDialog } from "./delete-product-dialog"
 import AdminProductsTable from "./products-table"
+import { deleteFile } from "@/lib/file-storage"
+import { useToast } from "@/hooks/use-toast"
+import { useProducts } from "@/hooks/use-products"
 
-interface ProductsSectionProps {
-  initialProducts: TProduct[]
-}
-
-export function ProductsSection({ initialProducts }: ProductsSectionProps) {
-  const [products, setProducts] = useState<TProduct[]>(initialProducts)
+export default function ProductsSection({products}: {products: TProduct[]}) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentProduct, setCurrentProduct] = useState<TProduct | null>(null)
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
 
+  const { toast } = useToast()
+  const { 
+    // products, 
+    isLoading, 
+    deleteProduct,
+    updateProduct,
+    // isAddingProduct,
+    // isDeletingProduct 
+  } = useProducts()
+  
   const handleEditProduct = (product: TProduct) => {
     setCurrentProduct(product)
     setIsEditDialogOpen(true)
@@ -32,22 +40,66 @@ export function ProductsSection({ initialProducts }: ProductsSectionProps) {
     setIsDeleteDialogOpen(true)
   }
 
-  const handleSaveProduct = (updatedProduct: TProduct) => {
-    setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p))
-    setIsEditDialogOpen(false)
-  }
-
-  const handleConfirmDelete = () => {
-    if (currentProduct) {
-      setProducts(products.filter(p => p.id !== currentProduct.id))
-      setIsDeleteDialogOpen(false)
+  const handleSaveProduct = async (updatedProduct: TProduct) => {
+    try {
+      await updateProduct(updatedProduct)
+      setCurrentProduct(updatedProduct)
+      setIsEditDialogOpen(false)
+    } catch (error) {
+      console.error("Error updating product:", error)
+      toast({
+        title: "Error",
+        description: "Failed to update the product",
+        variant: "destructive"
+      })
     }
   }
+
+  const handleConfirmDelete = async () => {
+    if (currentProduct) {
+      try {
+        // Delete images
+        const deletePromises = currentProduct.images?.map(async (image) => {
+          if(image) {
+            await deleteFile(image.imageURL)
+          }
+        })
+
+        if(deletePromises) {
+          await Promise.all(deletePromises)
+        }
+
+        await deleteProduct(currentProduct.id)
+        
+        setIsDeleteDialogOpen(false)
+        toast({
+          title: "Product deleted",
+          description: "The product has been deleted successfully",
+          variant: "default"
+        })
+      } catch (error) {
+        console.error(error)
+        toast({
+          title: "Error",
+          description: "Failed to delete the product",
+          variant: "destructive"
+        })
+      }
+    }
+  }
+
+  // const handleProductAdded = (newProduct: TProduct) => {
+  //   addProduct(newProduct)
+  // }
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesSearch
   })
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -63,9 +115,10 @@ export function ProductsSection({ initialProducts }: ProductsSectionProps) {
                 totalProducts={products.length}
                 hasSelectedProducts={selectedProducts.length > 0}
                 onDeleteSelected={() => {
-                  setProducts(products.filter(p => !selectedProducts.includes(p.id)))
+                  // TODO: Implement bulk delete
                   setSelectedProducts([])
                 }}
+                // onProductAdded={handleProductAdded}
               />
 
               <ProductsToolbar
@@ -106,5 +159,3 @@ export function ProductsSection({ initialProducts }: ProductsSectionProps) {
     </div>
   )
 }
-
-export default ProductsSection

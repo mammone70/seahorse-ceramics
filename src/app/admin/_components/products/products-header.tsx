@@ -9,9 +9,14 @@ interface ProductsHeaderProps {
   totalProducts: number
   onDeleteSelected?: () => void
   hasSelectedProducts?: boolean
+  // onProductAdded?: (newProduct: TProduct) => void
 }
 
-export function ProductsHeader({ totalProducts, onDeleteSelected, hasSelectedProducts }: ProductsHeaderProps) {
+export function ProductsHeader({ 
+  totalProducts, 
+  onDeleteSelected, 
+  hasSelectedProducts,
+  }: ProductsHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
       <TabsList>
@@ -19,6 +24,7 @@ export function ProductsHeader({ totalProducts, onDeleteSelected, hasSelectedPro
       </TabsList>
       <div className="flex items-center gap-2">
         <AddProductDialog />
+
         {hasSelectedProducts && (
           <Button variant="outline" size="sm" className="text-destructive" onClick={onDeleteSelected}>
             <Trash2 className="mr-2 h-4 w-4" /> Delete Selected

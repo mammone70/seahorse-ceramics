@@ -104,7 +104,7 @@ export function EditProductDialog({ isOpen, onOpenChange, product, onSave }: Edi
 
   const onSubmit = async (values: z.infer<typeof editProductFormSchema>) => {
     try {
-      let imageURLs: string[] = []
+      let imageURLs: {imageURL: string}[] = []
       
       // Upload new images if any
       if (selectedImages.length > 0) {
@@ -118,14 +118,16 @@ export function EditProductDialog({ isOpen, onOpenChange, product, onSave }: Edi
         }
 
         // Get all successful upload URLs
-        imageURLs = uploadResults.map(result => result.publicURL || "")
+        imageURLs = uploadResults
+          .map(result => ({imageURL: result.publicURL}))
+          .filter((url): url is {imageURL: string} => url.imageURL !== null)
       }
 
-      // Combine existing and new image URLs
-      const allImageURLs = [
-        ...(product?.images || []),
-        ...imageURLs
-      ]
+      // Get the current images that haven't been removed
+      const currentImages = product?.images || []
+      
+      // Combine current and new images
+      const updatedImages = [...currentImages, ...imageURLs] as {id: string, imageURL: string, productId: string, createdAt: Date, updatedAt: Date}[]
 
       const updatedProduct: TProduct = {
         ...product!,
@@ -133,8 +135,10 @@ export function EditProductDialog({ isOpen, onOpenChange, product, onSave }: Edi
         description: values.description,
         price: values.price,
         stock: values.stock,
-        imageURL: allImageURLs[0] || product?.imageURL || ""
+        images: updatedImages,
+        imageURL: updatedImages[0]?.imageURL || ""
       }
+console.log("updatedProduct", updatedProduct)
       onSave(updatedProduct)
       setSelectedImages([])
       onOpenChange(false)
@@ -144,7 +148,8 @@ export function EditProductDialog({ isOpen, onOpenChange, product, onSave }: Edi
         title: "Product Updated",
         description: "Your product has been updated successfully!",
       })
-    } catch {
+    } catch (error) {
+      console.error("Error updating product:", error)
       toast({
         variant: "destructive",
         title: "Failed",
@@ -243,10 +248,10 @@ export function EditProductDialog({ isOpen, onOpenChange, product, onSave }: Edi
                 <div className="mt-4">
                   <FormLabel>Current Images</FormLabel>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
-                    {product.images.map((imageURL, index) => (
-                      <div key={imageURL} className="relative group">
+                    {product.images.map((image, index) => (
+                      <div key={image.imageURL} className="relative group">
                         <Image
-                          src={imageURL || ""}
+                          src={image.imageURL || ""}
                           alt={`Product image ${index + 1}`}
                           className="rounded-md object-cover w-full aspect-square"
                           width={100}
@@ -261,8 +266,8 @@ export function EditProductDialog({ isOpen, onOpenChange, product, onSave }: Edi
                             newImages.splice(index, 1)
                             onSave({
                               ...product,
-                              images: newImages,
-                              imageURL: newImages[0] || product.imageURL
+                              images: newImages as {id: string, imageURL: string, productId: string, createdAt: Date, updatedAt: Date}[],
+                              imageURL: newImages[0].imageURL || product.imageURL
                             })
                           }}
                         >

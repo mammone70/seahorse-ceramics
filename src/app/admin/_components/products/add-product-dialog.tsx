@@ -25,12 +25,12 @@ import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { uploadFile } from "@/lib/file-storage"
-import { addProductServerAction } from "@/actions/products"
+import { uploadMultipleFiles } from "@/lib/file-storage"
 import { useToast } from "@/hooks/use-toast"
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import { MultiImageUpload } from "./multi-image-upload"
+import { useProducts } from "@/hooks/use-products"
 
 // Product categories
 // const categories = ["All Categories", "Vases", "Bowls", "Mugs", "Plates", "Planters", "Sets", "Home Decor", "Bathroom"]
@@ -63,10 +63,15 @@ const addProductFormSchema = z.object({
     images: z.array(z.instanceof(File)).min(1, "At least one image is required")
 })
 
+// interface AddProductDialogProps {
+    // onProductAdded: (newProduct: TProduct) => void
+// }
+
 function AddProductDialog() {
     const { toast } = useToast()
     const [isProductDialogOpen, setIsProductDialogOpen] = useState(false)
-    const [selectedImages, setSelectedImages] = useState<File[]>([])
+    // const [selectedImages, setSelectedImages] = useState<File[]>([])
+    const { addProduct } = useProducts()
     
     const form = useForm<z.infer<typeof addProductFormSchema>>({
         resolver: zodResolver(addProductFormSchema),
@@ -82,33 +87,26 @@ function AddProductDialog() {
     const onSubmit = async (values: z.infer<typeof addProductFormSchema>) => {
         try {
             // Upload all images
-            const uploadPromises = values.images.map(image => uploadFile({ imageFile: image }))
-            const uploadResults = await Promise.all(uploadPromises)
-            
-            // Check for any upload errors
-            const errors = uploadResults.filter(result => result.errorMessage)
-            if (errors.length > 0) {
-                throw new Error("Some images failed to upload")
-            }
+            const imageURLs = await uploadMultipleFiles({imageFiles: values.images});
 
-            // Get all successful upload URLs
-            const imageURLs = uploadResults.map(result => result.publicURL)
-
+            //connect public image urls to the product
             const newProduct = {
                 name: values.name,
                 description: values.description,
                 price: values.price,
                 stock: values.stock,
-                imageURL: imageURLs[0], // Set first image as main image
-                images: imageURLs // Store all image URLs
+                imageURL: imageURLs[0].publicURL, // Set first image as main image
+                images: imageURLs.map(image => ({imageURL: image.publicURL})) // Store all image URLs
             }
 
-            await addProductServerAction(newProduct)
+            //add product to the database
+            await addProduct(newProduct)
 
             form.reset()
-            setSelectedImages([])
+            // setSelectedImages([])
             setIsProductDialogOpen(false)
-
+            // onProductAdded(newProduct);
+            
             toast({
                 variant: "default",
                 title: "Product Added",
@@ -120,6 +118,8 @@ function AddProductDialog() {
                 title: "Failed",
                 description: "Your new product was not able to be added!",
             })
+
+            console.log(error)
         }
     }
 
@@ -131,7 +131,6 @@ function AddProductDialog() {
                 </Button>
             </DialogTrigger>
             
-            <DialogClose onClick={() => setIsProductDialogOpen(false)}></DialogClose>
             
             <DialogContent className="max-w-2xl h-auto overflow-auto">
                 <DialogHeader>
@@ -205,7 +204,7 @@ function AddProductDialog() {
                                             <MultiImageUpload
                                                 onImagesChange={(files) => {
                                                     field.onChange(files)
-                                                    setSelectedImages(files)
+                                                    // setSelectedImages(files)
                                                 }}
                                                 maxFiles={5}
                                             />
@@ -216,9 +215,11 @@ function AddProductDialog() {
                             />
                         </div>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsProductDialogOpen(false)}>
-                                Cancel
-                            </Button>
+                            <DialogClose asChild>
+                                <Button variant="outline" onClick={() => setIsProductDialogOpen(false)}>
+                                    Cancel
+                                </Button>
+                            </DialogClose>
                             <Button 
                                 type="submit"
                                 disabled={form.formState.isSubmitting}

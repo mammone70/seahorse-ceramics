@@ -1,4 +1,3 @@
-
 // import { useEffect } from "react"
 import ProductsSection from "../_components/products/products-section"
 import { getProductsServerAction } from "@/actions/products";
@@ -124,10 +123,10 @@ export default async function AdminProducts() {
 
 
   //get initial products
-  const products = await getProductsServerAction();
+  const initialProducts = await getProductsServerAction();
 
   return (
-    <ProductsSection initialProducts={products}></ProductsSection>
+    <ProductsSection products={initialProducts} />
   )
 }
 
