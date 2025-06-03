@@ -127,6 +127,7 @@ export default async function AdminProducts() {
 
   return (
     <ProductsSection products={initialProducts} />
+    // <ProductsSection />
   )
 }
 

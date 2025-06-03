@@ -13,7 +13,8 @@ import { deleteFile } from "@/lib/file-storage"
 import { useToast } from "@/hooks/use-toast"
 import { useProducts } from "@/hooks/use-products"
 
-export default function ProductsSection({products}: {products: TProduct[]}) {
+export default function ProductsSection({initialProducts}: {initialProducts: TProduct[]}) {
+// export default function ProductsSection() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -22,13 +23,13 @@ export default function ProductsSection({products}: {products: TProduct[]}) {
 
   const { toast } = useToast()
   const { 
-    // products, 
+    products, 
     isLoading, 
     deleteProduct,
     updateProduct,
     // isAddingProduct,
     // isDeletingProduct 
-  } = useProducts()
+  } = useProducts(initialProducts)
   
   const handleEditProduct = (product: TProduct) => {
     setCurrentProduct(product)

@@ -174,7 +174,7 @@ function AddProductDialog() {
                                         <FormItem>
                                             <FormLabel>Quantity</FormLabel>
                                             <FormControl>
-                                                <Input type="number" placeholder="Quantity in stock" {...field} />
+                                                <Input type="number" min={0} placeholder="Quantity in stock" {...field} />
                                             </FormControl>
                                             <FormMessage/>
                                         </FormItem>
