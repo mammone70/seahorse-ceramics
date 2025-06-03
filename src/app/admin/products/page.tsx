@@ -126,7 +126,7 @@ export default async function AdminProducts() {
   const initialProducts = await getProductsServerAction();
 
   return (
-    <ProductsSection products={initialProducts} />
+    <ProductsSection initialProducts={initialProducts} />
     // <ProductsSection />
   )
 }
